@@ -9,3 +9,5 @@ Currently, the app is in Czech only, sorry.
 
 The app is part of Archaeological information system of the Czech Republic
 (<a href="https://www.aiscr.cz">AIS CR</a>).
+
+Issues are managed in the parrent repository https://github.com/petrpajdla/map_oao/issues
