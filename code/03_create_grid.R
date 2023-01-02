@@ -152,6 +152,10 @@ grids <- pian_nest %>%
 
 # export grid -------------------------------------------------------------
 
+if (file.exists(here::here("data/final", "oao_grid.geojson"))) {
+  file.remove(here::here("data/final", "oao_grid.geojson"))
+}
+
 st_write(grids, here::here("data/final", "oao_grid.geojson"))
 
 file.copy(here::here("data/final/oao_grid.geojson"),

@@ -22,7 +22,7 @@ dt_create <- function(data) {
         "Platnost oprávnění<br>MK ČR" = "mk_to",
         "Platnost dohody<br>s AV ČR" = "av_to"),
       options = list(
-        dom = "ti",
+        dom = "t",
         deferRender = TRUE,
         scrollY = "calc(100vh - 300px)", 
         scroller = TRUE,

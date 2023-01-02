@@ -57,31 +57,34 @@ oao_names_vec <- oao_names_tab$nazev %>%
 
 # navbar ui ---------------------------------------------------------------
 
-menu <- tags$nav(
+menubar <- tags$nav(
   class = "navbar navbar-inverse navbar-static-top",
   tags$div(
     class = "container-fluid",
     tags$div(
       class = "navbar-header",
-      tags$p(
-        class = "navbar-brand",
-        "Organizace s oprávněním provádět archeologický výzkum")
-    ),
+      tags$a(
+        class = "navbar-brand", href = "#!/",
+        icon("fas fa-map-marked-alt"), "Mapa archeologických organizací")),
     tags$ul(
       class = "nav navbar-nav",
       tags$li(
         a(href = route_link("/"),
           icon("fas fa-search"), "hledej podle polohy")),
       tags$li(
-        a(href = route_link("detail"), 
+        a(href = route_link("detail"),
           icon("fas fa-map"), "mapa působnosti ")),
       tags$li(
-        a(href = route_link("list"), 
+        a(href = route_link("list"),
           icon("fas fa-bars"), "seznam organizací")),
       tags$li(
-        a(href = route_link("about"), 
+        a(href = "https://amcr-info.aiscr.cz/oznameni",
+          target = "_blank",
+          icon_ext_link, "Oznámit stavební záměr")),
+      tags$li(
+        a(href = route_link("about"),
           icon("fas fa-info-circle"),
-          "o aplikaci"))
+          "o aplikaci")),
     ),
     tags$div(
       class = "navbar-right navbar-logo",
@@ -89,7 +92,6 @@ menu <- tags$nav(
         tags$img(src = 'AISCR_CZ_H_White.png', height = '60px')))
   )
 )
-
 
 # mapclick page -----------------------------------------------------------
 
@@ -364,7 +366,9 @@ details_server <- function(input, output, session) {
 list_page <- div(
   select_oao("oao_multiple", label = "Filtrovat organizace:", 
              multiple = TRUE),
-  DT::dataTableOutput("table")
+  DT::dataTableOutput("table"),
+  tags$p(style = "margin-top:6px;",
+    "Celkem evidujeme ", textOutput("n_oao", inline = TRUE), " organizací.")
 )
 
 # list server
@@ -387,6 +391,9 @@ list_server <- function(input, output, session) {
     }
   })
   
+  output$n_oao <- renderText({
+    nrow(oao_meta)
+  })
 }
 
 
@@ -419,7 +426,7 @@ ui <- fluidPage(
   title = "Mapa OAO",
   theme = "main.css",
   tags$head(includeHTML("google-analytics.html")),
-  menu,
+  menubar,
   router$ui,
 )
 
@@ -448,7 +455,7 @@ server <- function(input, output, session) {
   # greeter ---------------------------------------------------------------
   
   greeter <- modalDialog(
-    title = "Vítejte!",
+    title = "Organizace s oprávněním provádět archeologický výzkum",
     easyClose = TRUE, 
     size = "l",
     includeHTML("text/greeter.html"),

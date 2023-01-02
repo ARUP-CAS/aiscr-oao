@@ -31,7 +31,7 @@ revised_gd_url <- "https://docs.google.com/spreadsheets/d/1knxDiUuCVqwgzgQkodhGg
 # bg data
 kraje <- RCzechia::kraje()
 okresy <- RCzechia::okresy()
-katastry <- sf::read_sf(here::here("data/raw", "katastry_shp"))
+katastry <- sf::read_sf(here::here("data/raw/ruian_ku/", "SPH_KU.shp"), crs = 5514)
 
 # dataprep ----------------------------------------------------------------
 
@@ -83,12 +83,22 @@ oao_okresy <- oao_uzemi %>%
   add_polygon() %>% 
   sf::st_as_sf()
 
+# write checks to control whether all values exist!!!
+# x <- oao_uzemi %>% 
+#   filter(is_katastr) %>% 
+#   mutate(x = strsplit(katastr, split = "; ")) %>% 
+#   pull(x) %>% 
+#   unlist() %>% 
+#   unique()
+# table(x %in% katastry$NAZEV_KU)
+# x[!x %in% katastry$NAZEV_KU]
+
 # katastry
 oao_katastry <- oao_uzemi %>% 
   filter(is_katastr) %>% 
   select(ico, katastr) %>% 
   separate2longer("katastr", 200) %>% 
-  left_join(katastry, by = c("value" = "NAZ_KU")) %>% 
+  left_join(katastry, by = c("value" = "NAZEV_KU")) %>% 
   add_polygon() %>% 
   sf::st_as_sf() %>% 
   sf::st_transform(4326)
@@ -98,7 +108,15 @@ oao_uzemi_poly <- oao_republika %>%
   bind_rows(oao_kraje) %>% 
   bind_rows(oao_okresy) %>% 
   bind_rows(oao_katastry) %>% 
-  sf::st_make_valid()
+  group_by(ico) %>% 
+  nest() %>% 
+  mutate(data = map(data, sf::st_as_sf),
+         data = map(data, sf::st_make_valid),
+         data = map(data, sf::st_union),
+         data = map(data, nngeo::st_remove_holes, max_area = 1e4)) %>% 
+  unnest(data) %>% 
+  ungroup(groups = ico) %>% 
+  sf::st_as_sf()
 
 # valid geometry?
 sf::st_is_valid(oao_uzemi_poly) %>% all()
@@ -114,13 +132,23 @@ oao_uzemi_poly <- oao_uzemi_poly %>%
 
 # export resulting polygons -----------------------------------------------
 
+if (file.exists(here::here("data/final", "oao_territory_poly.geojson"))) {
+  file.remove(here::here("data/final", "oao_territory_poly.geojson"))
+}
+
 sf::st_write(oao_uzemi_poly, 
              here::here("data/final", "oao_territory_poly.geojson"))
 
 
 # simplify polygons for the web use ---------------------------------------
 
-oao_uzemi_poly_simple <- sf::st_simplify(oao_uzemi_poly, dTolerance = 150)
+oao_uzemi_poly_simple <- sf::st_simplify(oao_uzemi_poly, 
+                                         dTolerance = 150, 
+                                         preserveTopology = TRUE)
+
+if (file.exists(here::here("data/final", "oao_territory_poly_simple.geojson"))) {
+  file.remove(here::here("data/final", "oao_territory_poly_simple.geojson"))
+}
 
 sf::st_write(oao_uzemi_poly_simple, 
              here::here("data/final", "oao_territory_poly_simple.geojson"))
@@ -141,19 +169,19 @@ file.copy(here::here("data/final/oao_territory_poly_simple.geojson"),
 #   ggplot() +
 #     geom_sf() +
 #     facet_wrap(~ico)
-
-# oao_uzemi_poly_simple %>% 
-#   filter(nazev_zkraceny == "MU Brno") %>% 
-#   leaflet::leaflet() %>% 
-#   leaflet::addTiles() %>% 
+#
+# oao_uzemi_poly_simple %>%
+#   filter(ico == "00065048") %>%
+#   leaflet::leaflet() %>%
+#   leaflet::addTiles() %>%
 #   leaflet::addPolygons()
-# 
-# oao_uzemi_poly %>% 
-#   filter(nazev_zkraceny == "Muzeum Vrchlabí") %>% 
-#   leaflet::leaflet() %>% 
-#   leaflet::addTiles() %>% 
+#
+# oao_uzemi_poly %>%
+#   filter(nazev_zkraceny == "Muzeum Vrchlabí") %>%
+#   leaflet::leaflet() %>%
+#   leaflet::addTiles() %>%
 #   leaflet::addPolygons()
-
+#
 # # Searches through katastr names and plots their position.
 # katastry[str_detect(katastry$NAZ_KU, "Střítež"), ] %>%
 #   ggplot() +
@@ -161,9 +189,9 @@ file.copy(here::here("data/final/oao_territory_poly_simple.geojson"),
 #   geom_sf() +
 #   geom_sf_text(aes(label = NAZ_KU)) +
 #   theme_void()
-# 
-# oao_republika %>% 
-#   sf::st_as_sf() %>% 
+#
+# oao_republika %>%
+#   sf::st_as_sf() %>%
 #   ggplot() +
 #   geom_sf() +
 #   facet_wrap(~nazev_zkraceny)

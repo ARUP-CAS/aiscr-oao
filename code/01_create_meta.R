@@ -119,6 +119,7 @@ oao_out <- oao_gd %>%
     uzemi = if_else(is_kraj, paste0(kraj, "."), uzemi),
     uzemi = if_else(is_okres, paste0("Okres ", okres, "."), uzemi),
     uzemi = if_else(is_katastr, paste0("Kat. úz. ", katastr, "."), uzemi),
+    uzemi = if_else(is_okres & is_katastr, paste0("Okres ", okres, " a kat. úz. ", katastr, "."), uzemi),
     # proper dates
     across(ends_with(c("from", "to")), \(x) lubridate::ymd(x))
   ) %>% 
@@ -156,6 +157,10 @@ oao_out <- address %>%
 
 
 # data export -------------------------------------------------------------
+
+if (file.exists(paste0(dir_fin, "/oao_meta.geojson"))) {
+  file.remove(paste0(dir_fin, "/oao_meta.geojson"))
+}
 
 sf::write_sf(oao_out, paste0(dir_fin, "/oao_meta.geojson"))
 
