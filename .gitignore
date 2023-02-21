@@ -4,12 +4,10 @@
 .httr-oauth
 .DS_Store
 
-
-poster/
-data/
+/data/
 helpfiles/
+poster/
 
-app/*.geojson
 app/rsconnect/
 
 app_original/
