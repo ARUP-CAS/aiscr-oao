@@ -62,15 +62,15 @@ oao_gd <- read_sheet(revised_gd_url, sheet = "oao_webapp") %>%
 
 # not implemented in the webapp yet
 
-address <- oao_gd %>% 
-  pull(adresa) %>% 
+address <- oao_gd %>%
+  pull(adresa) %>%
   RCzechia::geocode()
 
 # oao_gd %>% 
 #   select(nazev_zkraceny, adresa) %>% 
 #   left_join(address, by = c(adresa = "address")) %>% 
 #   View()
-  
+
 # oao_address <- oao_kontakt %>%
 #   pull(adresa) %>%
 #   RCzechia::geocode() %>%
@@ -119,15 +119,18 @@ oao_out <- oao_gd %>%
     uzemi = if_else(is_kraj, paste0(kraj, "."), uzemi),
     uzemi = if_else(is_okres, paste0("Okres ", okres, "."), uzemi),
     uzemi = if_else(is_katastr, paste0("Kat. úz. ", katastr, "."), uzemi),
+    uzemi = if_else(is_kraj & is_okres, paste0(kraj, " a okres ", okres, "."), uzemi),
+    uzemi = if_else(is_kraj & is_katastr, paste0(kraj, " a kat. úz. ", katastr, "."), uzemi),
     uzemi = if_else(is_okres & is_katastr, paste0("Okres ", okres, " a kat. úz. ", katastr, "."), uzemi),
+    uzemi = if_else(is_kraj & is_okres & is_katastr, paste0(kraj, ", okres ", okres, " a kat. úz. ", katastr, "."), uzemi),
     # proper dates
     across(ends_with(c("from", "to")), \(x) lubridate::ymd(x))
   ) %>% 
   select(ico, nazev_zkraceny, nazev, spec_text, adresa, web,
          starts_with(c("mk_", "av_")), note, uzemi)
 
-oao_out <- address %>% 
-  select(-everything()) %>% 
+oao_out <- address %>%
+  select(-everything()) %>%
   bind_cols(oao_out)
 
 # oao_uzemi_up <- oao_uzemi %>% 

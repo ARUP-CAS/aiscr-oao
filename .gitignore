@@ -15,3 +15,7 @@ app/rsconnect/
 app_original/
 
 code/legacy/
+
+emailer/emails/
+emailer/secret.txt
+emailer/emailer.log

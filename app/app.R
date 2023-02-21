@@ -1,5 +1,7 @@
 # app
-# deployApp(appDir = here::here("app/"), appName = "app_oao")
+
+# note: remote shiny server restarts the app only when file app.R has changes
+#
 
 # packages ----------------------------------------------------------------
 
@@ -59,37 +61,63 @@ oao_names_vec <- oao_names_tab$nazev %>%
 
 menubar <- tags$nav(
   class = "navbar navbar-inverse navbar-static-top",
+  # menu visible on large screens
   tags$div(
-    class = "container-fluid",
+    class = "container-fluid hidden-xs hidden-sm hidden-md",
     tags$div(
       class = "navbar-header",
       tags$a(
         class = "navbar-brand", href = "#!/",
-        icon("fas fa-map-marked-alt"), "Mapa archeologických organizací")),
+        icon("fas fa-map-marked-alt"), "Mapa archeologických organizací")
+    ),
     tags$ul(
       class = "nav navbar-nav",
       tags$li(
         a(href = route_link("/"),
-          icon("fas fa-search"), "hledej podle polohy")),
+          icon("fas fa-search"), "Hledej podle polohy")),
       tags$li(
         a(href = route_link("detail"),
-          icon("fas fa-map"), "mapa působnosti ")),
+          icon("fas fa-map"), "Mapa působnosti")),
       tags$li(
         a(href = route_link("list"),
-          icon("fas fa-bars"), "seznam organizací")),
+          icon("fas fa-bars"), "Seznam organizací")),
       tags$li(
         a(href = "https://amcr-info.aiscr.cz/oznameni",
           target = "_blank",
           icon_ext_link, "Oznámit stavební záměr")),
       tags$li(
         a(href = route_link("about"),
-          icon("fas fa-info-circle"),
-          "o aplikaci")),
+          icon("fas fa-info-circle"), "O aplikaci")),
     ),
     tags$div(
       class = "navbar-right navbar-logo",
       a(href = 'https://www.aiscr.cz/', target = '_blank',
         tags$img(src = 'AISCR_CZ_H_White.png', height = '60px')))
+  ),
+  # menu visible on small screens
+  tags$div(
+    class = "container visible-xs visible-sm visible-md",
+    tags$div(
+      class = "navbar-header",
+      tags$a(
+        class = "navbar-brand", href = "#!/",
+        icon("fas fa-map-marked-alt"), "Mapa OAO")
+    ),
+    tags$ul(
+      class = "nav navbar-nav",
+      tags$li(
+        a(href = route_link("/"),
+          icon("fas fa-search"), "Hledej")),
+      tags$li(
+        a(href = route_link("detail"),
+          icon("fas fa-map"), "Mapa")),
+      tags$li(
+        a(href = route_link("list"),
+          icon("fas fa-bars"), "Seznam")),
+      tags$li(
+        a(href = route_link("about"),
+          icon("fas fa-info-circle"), "Aplikace")),
+    )
   )
 )
 
@@ -368,7 +396,7 @@ list_page <- div(
              multiple = TRUE),
   DT::dataTableOutput("table"),
   tags$p(style = "margin-top:6px;",
-    "Celkem evidujeme ", textOutput("n_oao", inline = TRUE), " organizací.")
+         "Celkem evidujeme ", textOutput("n_oao", inline = TRUE), " organizací.")
 )
 
 # list server
@@ -400,7 +428,19 @@ list_server <- function(input, output, session) {
 # about page --------------------------------------------------------------
 
 about_page <- div(
-  includeMarkdown("text/about.md")
+  fluidRow(
+    column(
+      3, includeMarkdown("text/about_left.md")
+    ),
+    column(
+      9, includeMarkdown("text/about_right.md")
+    )
+  ),
+  fluidRow(
+    column(
+      12, includeMarkdown("text/about_footer.md")
+    )
+  )
 )
 
 

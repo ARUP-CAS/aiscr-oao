@@ -97,7 +97,7 @@ oao_okresy <- oao_uzemi %>%
 oao_katastry <- oao_uzemi %>% 
   filter(is_katastr) %>% 
   select(ico, katastr) %>% 
-  separate2longer("katastr", 200) %>% 
+  separate2longer("katastr", 400) %>% 
   left_join(katastry, by = c("value" = "NAZEV_KU")) %>% 
   add_polygon() %>% 
   sf::st_as_sf() %>% 
