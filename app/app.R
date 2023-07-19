@@ -45,6 +45,8 @@ oao_meta <- oao_meta("data/oao_meta.geojson")
 oao_scope <- oao_sf("data/oao_scope.geojson")
 oao_grid <- oao_sf("data/oao_grid.geojson")
 
+ku_centroids <- oao_sf("data/ku.geojson")
+
 oao_rep <- oao_scope %>% 
   dplyr::filter(area >= 7.8e10) %>% 
   sf::st_drop_geometry()
@@ -127,7 +129,20 @@ menubar <- tags$nav(
 mapclick_page <- div(
   fluidRow(
     column(
-      6, leafletOutput("clickmap")
+      6, fluidRow(
+        column(
+          6, HTML("<b>Kliknutím do mapy</b> zvolte bod zájmu, 
+          případně se <b>přibližte na požadované katastrální území.</b> 
+          Organizace, které jsou v dané oblasti oprávněny provádět 
+          archeologický výzkum se zobrazí vpravo.")
+        ),
+        column(
+          6, selectInput("ku", "Katastrální území:", 
+                         choices = c(Vyberte = "", ku_centroids$ku),
+                         selectize = TRUE, width = "100%")
+        )
+      ),
+      leafletOutput("clickmap")
     ),
     column(
       6, tabsetPanel(
@@ -138,13 +153,12 @@ mapclick_page <- div(
             column(
               7, tags$div(
                 style = 'padding: 15px;',
-                tags$b("Kliknutím do mapy zvolte bod zájmu."),
                 "V okruhu ",
-                textOutput("buffer", inline = TRUE),
-                " km archeologický výzkum v posledních 5 letech
+                tags$b(textOutput("buffer", inline = TRUE)),
+                HTML("<b> km</b> archeologický výzkum v posledních <b>5 letech</b>
                 prováděly organizace uvedené v tabulce níže.
                 Organizace jsou řazeny sestupně dle počtu 
-                archeologických výzkumů v zadané vzdálenosti.")
+                archeologických výzkumů v zadané vzdálenosti."))
             ),
             column(
               5, tags$div(
@@ -164,7 +178,6 @@ mapclick_page <- div(
         tabPanel(
           "Oprávnění mají",
           HTML("<div style = 'padding: 15px;'>
-               <b>Kliknutím do mapy zvolte bod zájmu.</b>
                Na zadaném území mohou archeologický 
                výzkum provádět organizace uvedené v tabulce níže.
                Organizace jsou řazeny vzestupně dle velikosti území, 
@@ -200,25 +213,38 @@ mapclick_server <- function(input, output, session) {
     leaflet_map
   })
   
+  # selected ku
+  ku <- reactive({
+    input$ku
+  })
+  
+  # zoom map
+  observeEvent(ku(), {
+    leaflet_zoom(ku(), ku_centroids)
+  })
+  
   # coordinates of map click
+  click <- reactive({
+    input$clickmap_click
+  })
   click_sf <- reactive({
     click2sf(input$clickmap_click)
   })
   
   # add click marker to the map
-  observeEvent(input$clickmap_click, {
-    leaflet_czechrep_add_marker(input$clickmap_click)
+  observeEvent(click(), {
+    leaflet_czechrep_add_marker(click())
   })
   
   # filter oao
   output$tab_poly <- renderTable({
-    req(input$clickmap_click)
+    req(click())
     oao_filter_poly(oao_scope, click_sf(), oao_rep, 
                     oao_names_vec, client_url())
   }, align = "cl", sanitize.text.function = function(x) x)
   
   output$tab_grid <- renderTable({
-    req(input$clickmap_click)
+    req(click())
     oao_filter_grid(oao_grid, click_sf(), input$buffer, 
                     oao_names_vec, client_url())
   }, align = "cl", sanitize.text.function = function(x) x)
@@ -239,7 +265,7 @@ mapclick_server <- function(input, output, session) {
   })
   
   output$link_da_buffer <- renderUI({
-    req(input$clickmap_click)
+    req(click())
     tagList(
       "Zobrazit vybranou oblast v ",
       tags$a(
@@ -260,7 +286,7 @@ mapclick_server <- function(input, output, session) {
   })
   
   output$link_da_cell <- renderUI({
-    req(input$clickmap_click)
+    req(click())
     tagList(
       "Zobrazit okolí vybraného bodu v ",
       tags$a(
@@ -452,12 +478,12 @@ leaflet_map <- oao_scope %>%
 
 # router ------------------------------------------------------------------
 
-router <- make_router(
-  route("/", mapclick_page, mapclick_server),
-  route("detail", details_page, details_server),
-  route("list", list_page, list_server),
-  route("about", about_page)
-)
+# router <- make_router(
+#   route("/", mapclick_page, mapclick_server),
+#   route("detail", details_page, details_server),
+#   route("list", list_page, list_server),
+#   route("about", about_page)
+# )
 
 
 # ui ----------------------------------------------------------------------
@@ -467,13 +493,19 @@ ui <- fluidPage(
   theme = "main.css",
   tags$head(includeHTML("google-analytics.html")),
   menubar,
-  router$ui,
+  router_ui(
+    route("/", mapclick_page),
+    route("detail", details_page),
+    route("list", list_page),
+    route("about", about_page)
+  )
 )
 
 
 # server ------------------------------------------------------------------
 
 server <- function(input, output, session) {
+  router_server()
   
   # get current url
   client_url <<- reactive({
@@ -490,7 +522,11 @@ server <- function(input, output, session) {
   #     )
   # })
   
-  router$server(input, output, session)
+  mapclick_server(input, output, session)
+  
+  details_server(input, output, session)
+  
+  list_server(input, output, session)
   
   # greeter ---------------------------------------------------------------
   
@@ -504,7 +540,10 @@ server <- function(input, output, session) {
   
   showModal(greeter)
   
-  # parsing url parameter ?oao=ico
+  
+  # url params ------------------------------------------------------------
+  
+  # update oao selectInput
   observe({
     oao_url <- get_query_param(field = "oao")
     
@@ -512,6 +551,43 @@ server <- function(input, output, session) {
       updateSelectInput(inputId = "oao", selected = oao_url)
     }
   })
+  
+  # update oao url
+  observe({
+    if (input$oao != "") {
+      change_page(paste0("detail?oao=", input$oao))
+    }
+  })
+  
+  # update lat/lon point
+  observe({
+    url_lat <- get_query_param(field = "lat")
+    url_lng <- get_query_param(field = "lng")
+    
+    if (!is.null(url_lat) & !is.null(url_lng)) {
+      url_coords <- list(
+        lat = as.numeric(url_lat), 
+        lng = as.numeric(url_lng)
+      )
+      
+      leaflet_czechrep_add_marker(url_coords)
+      
+      
+    }
+  })
+  
+  # update lat/lon url
+  observe({
+    if (!is.null(input$clickmap_click)) {
+      change_page(
+        paste0(
+          "#!/?lat=", round(input$clickmap_click$lat, 4),
+          "&lng=", round(input$clickmap_click$lng, 4)
+        )
+      )
+    }
+  })
+  
 }
 
 
