@@ -28,6 +28,11 @@ download.file(link, path_zip)
 # unz
 unzip(path_zip, exdir = path_unz)
 
+# okr
+okr <- RCzechia::okresy() %>% 
+  st_drop_geometry() %>% 
+  dplyr::select(KOD_LAU1, NAZ_LAU1)
+
 
 # prep ku layer -----------------------------------------------------------
 
@@ -38,12 +43,12 @@ ku <- st_read(paste0(path_unz, "/1/KATUZE_P.shp")) %>%
 # centroids ---------------------------------------------------------------
 
 centroids <- ku %>% 
-  dplyr::select(NAZEV) %>% 
+  dplyr::select(NAZEV, LAU1_KOD) %>% 
+  dplyr::left_join(okr, by = c("LAU1_KOD" = "KOD_LAU1")) %>% 
   st_centroid() %>%
   st_transform(4326) %>% 
   st_simplify() %>% 
-  dplyr::rename(ku = NAZEV)
-
+  dplyr::select(ku = NAZEV, okr = NAZ_LAU1)
 
 # output ------------------------------------------------------------------
 
