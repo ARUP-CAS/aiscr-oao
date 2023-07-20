@@ -10,7 +10,7 @@
 #' @examples
 oao_meta <- function(dsn, client_url) {
   sf::st_read(dsn = dsn) %>% 
-    sf::st_drop_geometry() %>% 
+    # sf::st_drop_geometry() %>% 
     dplyr::mutate(
       dplyr::across(dplyr::ends_with(c("from", "to")), \(x) format(x, "%d. %m. %Y")),
       # dplyr::across(dplyr::ends_with(c("from", "to")), \(x) stringr::str_replace_all(x, "\\s", "&nbsp")),

@@ -36,10 +36,11 @@ leaflet_czechrep <- function(data) {
 leaflet_czechrep_add_marker <- function(click) {
   leaflet::leafletProxy("clickmap") %>%
     leaflet::clearMarkers() %>%
-    leaflet::addCircleMarkers(click$lng, click$lat, 
-                              color = "#3E3F3A", radius = 16, 
-                              stroke = TRUE, fillOpacity = 0.6,
-                              popup = "Zvolená poloha")
+    leaflet::addCircleMarkers(
+      layerId = "poi", click$lng, click$lat, 
+      color = "#3E3F3A", radius = 16, 
+      stroke = TRUE, fillOpacity = 0.6,
+      popup = "Zvolená poloha")
 }
 
 click2sf <- function(click) {
