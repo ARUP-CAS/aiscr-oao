@@ -1,0 +1,31 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: >-
+  Mapa archeologických organizací [Map of Archaeological
+  Organizations]
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Petr
+    family-names: Pajdla
+    email: pajdla@arub.cz
+    affiliation: 'Institute of Archaeology, Czech Acad Sci, Brno'
+    orcid: 'https://orcid.org/0000-0001-7050-9572'
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.8178384
+    description: Zenodo DOI
+repository-code: 'https://github.com/ARUP-CAS/aiscr-oao/'
+url: 'https://oao.aiscr.cz/'
+abstract: >-
+  A Shiny app publishing data on
+  organizations with a licence to conduct archaeological
+  excavations in the Czech Republic.
+keywords:
+  - archaeology
+  - shiny
+license: MIT
