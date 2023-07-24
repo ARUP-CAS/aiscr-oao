@@ -33,14 +33,19 @@ leaflet_czechrep <- function(data) {
 }
 
 
-leaflet_czechrep_add_marker <- function(click) {
+leaflet_czechrep_add_marker <- function(click, url) {
   leaflet::leafletProxy("clickmap") %>%
     leaflet::clearMarkers() %>%
     leaflet::addCircleMarkers(
       layerId = "poi", click$lng, click$lat, 
       color = "#3E3F3A", radius = 16, 
       stroke = TRUE, fillOpacity = 0.6,
-      popup = "Zvolená poloha")
+      # popup = paste0(
+      #   tags$b("Zvolený bod"), tags$br(),
+      #   tags$a(
+      #     href = paste0(client_url(), "?lat=", click$lat, "&lng=", click$lng), 
+      #     click$lat, "N ", click$lng, "E"))
+      )
 }
 
 click2sf <- function(click) {
@@ -50,9 +55,9 @@ click2sf <- function(click) {
 }
 
 leaflet_zoom <- function(ku, centroids) {
-  coords <- centroids[centroids$ku == ku, ] %>% 
+  coords <- centroids[centroids$ku == ku, ] %>%
     st_coordinates()
   
-  leaflet::leafletProxy("clickmap") %>% 
+  leaflet::leafletProxy("clickmap") %>%
     leaflet::setView(zoom = 14, lng = coords[1], lat = coords[2])
 }

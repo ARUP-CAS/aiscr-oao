@@ -22,8 +22,10 @@ source("R/dt_meta.R")
 
 # constants ----
 sleep <- 0.4
+
 url_da <- "https://digiarchiv.aiscr.cz/results?entity=projekt&f_organizace="
 url_da_coords <- "https://digiarchiv.aiscr.cz/results?mapa=true&loc_rpt="
+
 icon_link <- icon("fas fa-link")
 icon_ext_link <- icon("fas fa-external-link-alt")
 icon_map_link <<- icon("fas fa-map-marked-alt")
@@ -70,7 +72,7 @@ mapclick_page <- div(
       6, fluidRow(
         column(
           6, HTML("<b>Kliknutím do mapy</b> zvolte bod zájmu, 
-          případně se <b>přibližte na požadované katastrální území.</b> 
+          případně vyberte <b>požadované katastrální území.</b> 
           Organizace, které jsou v dané oblasti oprávněny provádět 
           archeologický výzkum se zobrazí vpravo.")),
         column(
@@ -126,100 +128,88 @@ mapclick_page <- div(
 mapclick_server <- function(input, output, session) {
   
   # reactives ----
-  # selected ku
-  ku <- reactive({
-    input$ku
-  })
+  # map point
+  values <- reactiveValues(
+    coords = NULL,
+    sf = NULL
+  )
   
   # change map zoom
   zoom <- reactive({
     input$clickmap_zoom
   })
   
-  # coordinates of map click
-  click <- reactive({
-    
-    if (isTruthy(input$ku) & !isTruthy(input$clickmap_click)) {
-      ku_centroid <- dplyr::filter(ku_centroids, ku == input$ku)
-      list(
-        coords = list(
-          lat = round(st_coordinates(ku_centroid)[[2]], 5),
-          lng = round(st_coordinates(ku_centroid)[[1]], 5)),
-        sf = ku_centroid)
-    } else if (!isTruthy(input$ku) & isTruthy(input$clickmap_click)) { #!is.null(input$clickmap_click)
-      list(
-        coords = list(
-          lat = round(as.numeric(input$clickmap_click$lat), 5),
-          lng = round(as.numeric(input$clickmap_click$lng), 5)),
-        sf = click2sf(input$clickmap_click))
-    } else {
-      NULL
-    }
-  })
-  
-  # x <- read_sf(here::here("app/data/ku.geojson"))
-  # y <- x %>% dplyr::arrange(ku) %>% 
-  #   dplyr::transmute(ku = paste0(ku, " (okr. ", okr, ")")) %>% 
-  #   filter(ku == "Adolfovice (okr. Jeseník)")
-  # st_geometry(y)
-  # y
-  
   # buffer around the click
   click_buffer_bbox <- reactive({
-    click_buffer(click()$sf, input$buffer)
+    if (!is.null(values$sf)) {
+      click_buffer(values$sf, input$buffer)
+    }
   })
   
   # box/cell of the given click
   click_cell_bbox <- reactive({
-    click_cell(click()$sf)
+    if (!is.null(values$sf)) {
+      click_cell(values$sf)
+    }
   })
-  
   
   # observers ----
-  # zoom map to selected ku
-  observeEvent(ku(), {
-    leaflet_zoom(ku(), ku_centroids)
+  # observe click, select of ku or url
+  observe({
+    # map click
+    observe({
+      req(input$clickmap_click)
+      values$coords <- list(
+        lat = round(as.numeric(input$clickmap_click$lat), 4),
+        lng = round(as.numeric(input$clickmap_click$lng), 4))
+      values$sf <- click2sf(input$clickmap_click)
+    })
+    # ku select
+    observe({
+      req(input$ku)
+      ku_centroid <- dplyr::filter(ku_centroids, ku == input$ku)
+      values$coords <- list(
+        lat = round(st_coordinates(ku_centroid)[[2]], 4),
+        lng = round(st_coordinates(ku_centroid)[[1]], 4))
+      values$sf <-  ku_centroid
+      # zoom
+      leaflet_zoom(input$ku, ku_centroids)
+    })
+    # url parameter passed
+    observe({
+      req(get_query_param(field = "lat"))
+      url_lat <- round(as.numeric(get_query_param(field = "lat")), 4)
+      url_lng <- round(as.numeric(get_query_param(field = "lng")), 4)
+      values$coords <- list(
+        lat = url_lat, lng = url_lng)
+      values$sf <- sf::st_point(
+        c(url_lng, url_lat)) %>% 
+        sf::st_sfc(crs = 4326)
+      # zoom
+      leaflet::leafletProxy("clickmap") %>%
+        leaflet::setView(zoom = 14, lng = url_lng, lat = url_lat)
+    })
   })
   
-  # clear ku after zoom
+  # clear ku selector after zoom
   observeEvent(zoom(), {
     updateSelectInput(inputId = "ku", selected = "")
   })
   
-  # add click marker to the map after click
-  observeEvent(click(), {
-    leaflet_czechrep_add_marker(click()$coords)
-  })
-  
-  # update click marker from url
+  # add marker to the map
   observe({
-    url_lat <- get_query_param(field = "lat")
-    url_lng <- get_query_param(field = "lng")
-    
-    if (!is.null(url_lat) & !is.null(url_lng)) {
-      url_coords <- list(
-        lat = round(as.numeric(url_lat), 5), 
-        lng = round(as.numeric(url_lng), 5))
-      
-      leaflet_czechrep_add_marker(url_coords)
+    if (!is.null(values$coords)) {
+      leaflet_czechrep_add_marker(values$coords)
     }
   })
   
-  # update url from click lat/lng
-  observe({
-    if (!is.null(click()$coords$lat) | !is.null(click()$coords$lng)) {
-      change_page(
-        paste0(
-          "#!/?lat=", click()$coords$lat,
-          "&lng=", click()$coords$lng))
-    }
-  })
-  
-  # remove click marker after ku zoom
-  observeEvent(ku(), {
-    leafletProxy("clickmap") %>%
-      removeMarker("poi")
-  })
+  # # update url from point lat/lng - causes page blinking, not necessary
+  # observe({
+  #   change_page(
+  #     paste0(
+  #       "#!/?lat=", values$coords$lat,
+  #       "&lng=", values$coords$lng))
+  # })
   
   # outputs ----
   # clickmap - main map
@@ -236,74 +226,81 @@ mapclick_server <- function(input, output, session) {
   # tables ----
   # tab with filtered oao from polygon
   output$tab_poly <- renderTable({
-    req(click())
-    oao_filter_poly(oao_scope, click()$sf, oao_rep,
-                    oao_names_vec, client_url())
+    if (!is.null(values$sf)) {
+      oao_filter_poly(oao_scope, values$sf, oao_rep,
+                      oao_names_vec, client_url())
+    }
   }, align = "cl", sanitize.text.function = function(x) x)
   
   # tab with filtered oao from grid
   output$tab_grid <- renderTable({
-    req(click())
-    oao_filter_grid(oao_grid, click()$sf, input$buffer,
-                    oao_names_vec, client_url())
+    if (!is.null(values$sf)) {
+      oao_filter_grid(oao_grid, values$sf, input$buffer,
+                      oao_names_vec, client_url())
+    }
   }, align = "cl", sanitize.text.function = function(x) x)
   
   # tab with oao for whole country
   output$tab_rep <- renderTable({
-    oao_rep %>% 
-      dplyr::mutate(name = oao_names_vec[ico],
-                    link = paste0("<a href='", client_url(), 
-                                  "detail?oao=", ico, "/'>", 
-                                  icon_map_link, "</a>")) %>% 
-      dplyr::select(Detail = link, Organizace = name)
+    if (!is.null(values$sf)) {
+      oao_rep %>% 
+        dplyr::mutate(name = oao_names_vec[ico],
+                      link = paste0("<a href='", client_url(), 
+                                    "detail?oao=", ico, "/'>", 
+                                    icon_map_link, "</a>")) %>% 
+        dplyr::select(Detail = link, Organizace = name)
+    }
   }, align = "cl", sanitize.text.function = function(x) x)
   
   # links ---- 
   # link to the selected point
   output$link_click <- renderUI({
-    req(click())
-    HTML(
-      paste0(
-        "Link na tento bod: <a href=", client_url(), 
-        "?lat=", click()$coords$lat,
-        "&lng=", click()$coords$lng, ">", 
-        icon_link, " ", client_url(), 
-        "?lat=", click()$coords$lat,
-        "&lng=", click()$coords$lng, "</a>"))
+    if (!is.null(values$coords)) {
+      HTML(
+        paste0(
+          "Zvolený bod: <a href=", client_url(), 
+          "?lat=", values$coords$lat,
+          "&lng=", values$coords$lng, ">", 
+          icon_link, " <b>",
+          values$coords$lat, "</b>N <b>",
+          values$coords$lng, "</b>E</a>"))
+    }
   })
   
   # link to DA based on buffer
   output$link_da_buffer <- renderUI({
-    req(click())
-    tagList(
-      "Zobrazit vybranou oblast v ",
-      tags$a(
-        icon_ext_link, "Digitálním archivu AMČR",
-        href = paste0(
-          url_da_coords,
-          click_buffer_bbox()[2], ",",
-          click_buffer_bbox()[1], ",",
-          click_buffer_bbox()[4], ",",
-          click_buffer_bbox()[3],
-          "&entity=projekt"),
-        target = "_blank"))
+    if (!is.null(values$coords)) {
+      tagList(
+        "Zobrazit vybranou oblast v ",
+        tags$a(
+          icon_ext_link, "Digitálním archivu AMČR",
+          href = paste0(
+            url_da_coords,
+            click_buffer_bbox()[2], ",",
+            click_buffer_bbox()[1], ",",
+            click_buffer_bbox()[4], ",",
+            click_buffer_bbox()[3],
+            "&entity=projekt"),
+          target = "_blank"))
+    }
   })
   
   # link to DA based on grid cell
   output$link_da_cell <- renderUI({
-    req(click())
-    tagList(
-      "Zobrazit okolí vybraného bodu v ",
-      tags$a(
-        icon_ext_link, "Digitálním archivu AMČR",
-        href = paste0(
-          url_da_coords,
-          click_cell_bbox()[2], ",",
-          click_cell_bbox()[1], ",",
-          click_cell_bbox()[4], ",",
-          click_cell_bbox()[3],
-          "&entity=projekt"),
-        target = "_blank"))
+    if (!is.null(values$coords)) {
+      tagList(
+        "Zobrazit okolí vybraného bodu v ",
+        tags$a(
+          icon_ext_link, "Digitálním archivu AMČR",
+          href = paste0(
+            url_da_coords,
+            click_cell_bbox()[2], ",",
+            click_cell_bbox()[1], ",",
+            click_cell_bbox()[4], ",",
+            click_cell_bbox()[3],
+            "&entity=projekt"),
+          target = "_blank"))
+    }
   })
   
 }
