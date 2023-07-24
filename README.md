@@ -1,7 +1,7 @@
 # Licensed archaeological organizations app
 
-![Website](https://img.shields.io/website?down_message=down&label=https%3A%2F%2Foao.aiscr.cz%2F&up_message=up&url=https%3A%2F%2Foao.aiscr.cz%2F)
-![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.8178384.svg)
+[![Website](https://img.shields.io/website?down_message=down&label=https%3A%2F%2Foao.aiscr.cz%2F&up_message=up&url=https%3A%2F%2Foao.aiscr.cz%2F)](https://oao.aiscr.cz)
+[![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.8178384.svg)](https://doi.org/10.5281/zenodo.8178384)
 ![GitHub](https://img.shields.io/github/license/ARUP-CAS/map_oao)
 
 ## Mapa archeologických organizací (Mapa OAO)
@@ -20,7 +20,7 @@ The app is part of the **Archaeological information system of the Czech Republic
 Please cite this sofware as:
 
 > Pajdla, P. 2023: *Mapa archeologických organizací* *[Map of Archaeological Organizations]*.
-> Source code: <https://github.com/ARUP-CAS/aiscr-oao>, application: <https://oao.aiscr.cz/>
+> Source code: <https://github.com/ARUP-CAS/aiscr-oao>, application: <https://oao.aiscr.cz/>,
   DOI: [10.5281/zenodo.8178384](https://doi.org/10.5281/zenodo.8178384).
 
 A poster presenting the app:
