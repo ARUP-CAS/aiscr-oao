@@ -19,7 +19,8 @@ leaflet_czechrep <- function(data) {
       leaflet::providers$CartoDB.Positron, 
       group = "Desaturovaná mapa") %>% 
     leaflet::addTiles(
-      urlTemplate = paste0("http://ags.cuzk.cz/arcgis/rest/services/zmwm/",
+      urlTemplate = paste0("https://ags.cuzk.cz/arcgis1/rest/services/ZTM_WM/", 
+                           #"http://ags.cuzk.cz/arcgis/rest/services/zmwm/",
                            "MapServer/tile/{z}/{y}/{x}?blankTile=false"), 
       attribution = paste0("Základní Mapy ČR ©",
                            "<a href='https://www.cuzk.cz/' target = '_blank'>ČÚZK</a>"), 

@@ -25,7 +25,7 @@ veřejných rejstříků, webových stránek daných organizací a
 Data o provedených výzkumech a jejich poloze jsou čerpána z 
 <a href="https://amcr-info.aiscr.cz/" target="_blank">Archeologické mapy ČR</a> (AMČR).
 
-Poslední aktualizace dat proběhla **5. 1. 2023**.
+Verze **1.1.0**. Poslední aktualizace dat proběhla **24. 7. 2023**.
 
 ### Oznámení o stavebním záměru
 
