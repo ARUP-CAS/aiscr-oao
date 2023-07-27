@@ -122,7 +122,7 @@ oao_out <- oao_gd %>%
     # proper dates
     across(ends_with(c("from", "to")), \(x) lubridate::ymd(x))
   ) %>% 
-  select(ico, nazev_zkraceny, nazev, spec_text, adresa, web,
+  select(ico, nazev_zkraceny, nazev, spec_text, adresa, web, mail,
          starts_with(c("mk_", "av_")), note, uzemi)
 
 oao_out <- address %>%

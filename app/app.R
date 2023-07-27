@@ -27,8 +27,9 @@ url_da <- "https://digiarchiv.aiscr.cz/results?entity=projekt&f_organizace="
 url_da_coords <- "https://digiarchiv.aiscr.cz/results?mapa=true&loc_rpt="
 
 icon_link <- icon("fas fa-link")
-icon_ext_link <- icon("fas fa-external-link-alt")
+icon_ext_link <<- icon("fas fa-external-link-alt")
 icon_map_link <<- icon("fas fa-map-marked-alt")
+icon_mail <<- icon("far fa-envelope")
 
 
 # ui funs -----------------------------------------------------------------
@@ -76,9 +77,8 @@ mapclick_page <- div(
           Organizace, které jsou v dané oblasti oprávněny provádět 
           archeologický výzkum se zobrazí vpravo.")),
         column(
-          6, selectInput("ku", "Katastrální území:", 
-                         choices = c(Vyberte = "", ku_centroids$ku),
-                         selectize = TRUE, width = "100%"))),
+          6, selectizeInput("ku", "Katastrální území:", 
+                            choices = NULL, width = "100%"))),
       leafletOutput("clickmap")),
     column(
       6, tabsetPanel(
@@ -126,6 +126,10 @@ mapclick_page <- div(
 
 # mapclick server
 mapclick_server <- function(input, output, session) {
+  
+  updateSelectizeInput(session, 'ku', 
+                       choices = c(Vyberte = "", ku_centroids$ku), 
+                       server = TRUE)
   
   # reactives ----
   # map point
@@ -321,7 +325,9 @@ details_page <- div(
         column(
           4, checkboxInput("addr", "Zobrazit adresu", value = FALSE))),
       tags$hr(),
-      uiOutput("detail")),
+      uiOutput("detail"),
+      uiOutput("link"),
+      htmlOutput("linkdl")),
     column(
       8, leafletOutput("map"))))
 
@@ -351,12 +357,12 @@ details_server <- function(input, output, session) {
     }
   })
   
-  # update url from selectInput
-  observe({
-    if (input$oao != "") {
-      change_page(paste0("detail?oao=", input$oao))
-    }
-  })
+  # # update url from selectInput - causes reload
+  # observe({
+  #   if (input$oao != "") {
+  #     change_page(paste0("detail?oao=", input$oao))
+  #   }
+  # })
   
   # clear map when oao is switched
   observeEvent(input$oao, {
@@ -406,6 +412,36 @@ details_server <- function(input, output, session) {
     }
   })
   
+  # download handler ----
+  sf_tempfile <- function(x, file, layer) {
+    x %>% 
+      sf::st_transform(5514) %>% 
+      sf::st_write(dsn = file,
+                   layer = layer, delete_layer = TRUE)
+  }
+  
+  output$dl <- downloadHandler(
+    filename = function() {
+      paste0(input$oao, ".gpkg")
+    },
+    content = function(file) {
+      oao_grid_flt() %>% 
+        sf_tempfile(file, layer = "OAO Grid")
+      oao_scope_flt() %>% 
+        sf_tempfile(file, layer = "OAO Polygon")
+      oao_meta_flt() %>% 
+        select(ico, nazev_zkraceny, nazev, adresa, web0, mail0, 
+               starts_with("mk"), starts_with("av"), note) %>% 
+        sf_tempfile(file, layer = "OAO Metadata")
+      # sf::st_write(obj = sf::st_transform(oao_grid_flt(), 5514), dsn = file, 
+      #              layer = , delete_layer = TRUE)
+      # sf::st_write(obj = sf::st_transform(oao_scope_flt(), 5514), dsn = file, 
+      #              layer = "OAO Polygon", delete_layer = TRUE)
+      # sf::st_write(obj = sf::st_transform(oao_meta_flt(), 5514), dsn = file, 
+      #              layer = "OAO Metadata", delete_layer = TRUE)
+    }
+  )
+  
   # outputs ----
   # text with details about oao
   output$detail <- renderText({
@@ -416,7 +452,7 @@ details_server <- function(input, output, session) {
       oao_meta_flt() %>% dplyr::transmute(
         text = HTML(paste0(
           "<h3>", nazev, "</h3>",
-          "<p>", web, "</p>",
+          "<p>", web, "<br>", mail, "</p>",
           "<p>IČO: ", ico, "</p>",
           "<h4>Adresa</h4>",
           "<p>", adresa, "</p>",
@@ -427,15 +463,33 @@ details_server <- function(input, output, session) {
           },
           "<h4>Územní působnost</h4>",
           "<p>", uzemi, "</p>",
-          "<p>Zobrazit projekty vybrané organizace v ",
+          "<p>Projekty vybrané organizace v ",
           "<a href='", url_da, 
-          stringr::str_replace_all(nazev_zkraceny, "\\s", "%20"), 
-          "'>", 
-          icon_ext_link, " Digitálním archivu AMČR", "</a><br>",
-          "Tato stránka: <a href=", client_url(), "detail?oao=", ico, ">", 
-          icon_link, " ", client_url(), "detail?oao=", ico, "</a>"))) %>% 
+          stringr::str_replace_all(nazev, "\\s", "%20"), 
+          "'>", icon_ext_link, " Digitálním archivu AMČR", "</a></p>"))) %>% 
         dplyr::pull(text)
     }
+  })
+  
+  output$link <- renderText({
+    req(input$oao)
+    HTML(paste0(
+      "Zvolená organizace: <a href=", client_url(), "detail?oao=", input$oao, ">", 
+      icon_link, " <b>", oao_names_tab[oao_names_tab$ico == input$oao, ]$nazev, 
+      "</b></a><br>"))
+  })
+  
+  output$linkdl <- renderText({
+    req(input$oao)
+    paste0(
+      downloadLink("dl", label = HTML(paste0(
+        icon("far fa-save"), " <b>Stáhnout data</b>"))),
+      HTML(paste0(
+        " (podléhá licenci ",
+        "<a href=https://creativecommons.org/licenses/by-nc/4.0/>", 
+        icon("fab fa-creative-commons"), 
+        icon("fab fa-creative-commons-by"),
+        icon("fab fa-creative-commons-nc"), " CC BY-NC 4.0</a>)")))
   })
   
   # map

@@ -45,11 +45,16 @@ oao_meta <- function(dsn, client_url) {
             "Dohoda s AV ČR ", datum_av, "."),
           paste0(mk_id, ". Dohoda s AV ČR ", datum_av, ".")),
         "Oprávnění v plném rozsahu dle zákona o státní památkové péči."),
+      web0 = web,
       web = dplyr::if_else(
         !is.na(web), 
         paste0("<a target='_blank' href='", web, "'>",
-               icon("fas fa-external-link-alt"), " ", web, "</a>"),
-        "")) %>% 
+               icon_ext_link, " ", web, "</a>"), ""),
+      mail0 = mail,
+      mail = dplyr::if_else(
+        !is.na(mail), 
+        paste0("<a target='_blank' href='mailto:", mail, "'>",
+               icon_mail, " ", mail, "</a>"), "")) %>% 
     dplyr::arrange(nazev)
 }
 
