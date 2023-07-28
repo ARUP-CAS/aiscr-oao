@@ -45,6 +45,11 @@ hr {
   border-top: 2px solid #3E3F3A80;
 }
 
+code {
+  color: #428BCA;
+  background-color: #f3f1f7; 
+}
+
 /*
 .js-irs-0 .irs-single, .js-irs-0 .irs-bar-edge, .js-irs-0 .irs-bar {
   background: #3E3F3A;

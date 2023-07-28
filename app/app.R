@@ -548,10 +548,10 @@ list_server <- function(input, output, session) {
 about_page <- div(
   fluidRow(
     column(3, includeMarkdown("text/about_left.md")),
-    column(9, includeMarkdown("text/about_right.md"))),
+    column(4, includeMarkdown("text/about_center.md")),
+    column(4, includeMarkdown("text/about_right.md"))),
   fluidRow(
     column(12, includeMarkdown("text/about_footer.md"))))
-
 
 # server calls ------------------------------------------------------------
 
