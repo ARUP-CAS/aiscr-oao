@@ -20,8 +20,9 @@ The app is part of the **Archaeological information system of the Czech Republic
 Please cite this sofware as:
 
 > Pajdla, P. 2023: *Mapa archeologických organizací* *[Map of Archaeological Organizations]*.
-> Source code: <https://github.com/ARUP-CAS/aiscr-oao>, application: <https://oao.aiscr.cz/>,
-  DOI: [10.5281/zenodo.8178384](https://doi.org/10.5281/zenodo.8178384).
+> DOI: [10.5281/zenodo.8178384](https://doi.org/10.5281/zenodo.8178384).
+> Source code: <https://github.com/ARUP-CAS/aiscr-oao>, application: <https://oao.aiscr.cz/>.
+  
 
 A poster presenting the app:
 
@@ -43,4 +44,4 @@ The **repo** contains:
 
 ## Licenses
 
-Code is released under [MIT License](LICENSE), data, texts, figures etc. under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) license.
+Code is released under [MIT License](LICENSE), data, texts, figures etc. under [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/) license.
