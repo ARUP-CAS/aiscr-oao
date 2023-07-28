@@ -30,9 +30,9 @@ Data jsou zveřejněna pod licencí *Creative Commons Uveďte původ -- Neužív
 - `OAO Polygon` -- Polygon působnosti vybrané oragnizace.
     
     - `ico` -- IČO organizace.
-    - `area` -- Plocha polygonu působnosti organizace (km<sup>2</sup>.).
+    - `area` -- Plocha polygonu působnosti organizace (km<sup>2</sup>).
     
-- `OAO Grid` -- Čtvercová síť odvozená z čtvrtinových kvadrátů *Kartierung der Flora Mitteleuropas* (KFME) 
+- `OAO Grid` -- Čtvercová síť s počtem výzkumů organizace odvozená z čtvrtinových kvadrantů *Kartierung der Flora Mitteleuropas* (KFME) 
  o původní velikosti čtverců 5’ z. š. × 3’ z. d. (zhruba 6 × 5,5 km).
  
     - `ico` -- IČO organizace.

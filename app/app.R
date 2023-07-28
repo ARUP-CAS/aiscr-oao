@@ -485,7 +485,7 @@ details_server <- function(input, output, session) {
       downloadLink("dl", label = HTML(paste0(
         icon("far fa-save"), " <b>Stáhnout data</b>"))),
       HTML(paste0(
-        " (podléhá licenci ",
+        " (formát <i>.gpkg</i>, podléhá licenci ",
         "<a href=https://creativecommons.org/licenses/by-nc/4.0/>", 
         icon("fab fa-creative-commons"), 
         icon("fab fa-creative-commons-by"),
