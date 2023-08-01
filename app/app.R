@@ -23,6 +23,10 @@ source("R/dt_meta.R")
 # constants ----
 sleep <- 0.4
 
+# change when data/app is updated
+datestamp <<- "2023-08-01"
+version <<- "2.0.0"
+
 url_da <- "https://digiarchiv.aiscr.cz/results?entity=projekt&f_organizace="
 url_da_coords <- "https://digiarchiv.aiscr.cz/results?mapa=true&loc_rpt="
 
@@ -415,13 +419,12 @@ details_server <- function(input, output, session) {
   sf_tempfile <- function(x, file, layer) {
     x %>% 
       sf::st_transform(5514) %>% 
-      sf::st_write(dsn = file,
-                   layer = layer, delete_layer = TRUE)
+      sf::st_write(dsn = file, layer = layer, delete_layer = TRUE)
   }
   
   output$dl <- downloadHandler(
     filename = function() {
-      paste0(input$oao, ".gpkg")
+      paste0("oao_", input$oao, "_", datestamp, ".gpkg")
     },
     content = function(file) {
       oao_grid_flt() %>% 
@@ -429,15 +432,10 @@ details_server <- function(input, output, session) {
       oao_scope_flt() %>% 
         sf_tempfile(file, layer = "OAO Polygon")
       oao_meta_flt() %>% 
-        select(ico, nazev_zkraceny, nazev, adresa, web0, mail0, 
+        dplyr::select(ico, nazev_zkraceny, nazev, adresa, 
+                      app = web_app, web = web0, email = mail0, 
                starts_with("mk"), starts_with("av"), note) %>% 
         sf_tempfile(file, layer = "OAO Metadata")
-      # sf::st_write(obj = sf::st_transform(oao_grid_flt(), 5514), dsn = file, 
-      #              layer = , delete_layer = TRUE)
-      # sf::st_write(obj = sf::st_transform(oao_scope_flt(), 5514), dsn = file, 
-      #              layer = "OAO Polygon", delete_layer = TRUE)
-      # sf::st_write(obj = sf::st_transform(oao_meta_flt(), 5514), dsn = file, 
-      #              layer = "OAO Metadata", delete_layer = TRUE)
     }
   )
   
@@ -547,7 +545,13 @@ list_server <- function(input, output, session) {
 about_page <- div(
   fluidRow(
     column(3, includeMarkdown("text/about_left.md")),
-    column(4, includeMarkdown("text/about_center.md")),
+    column(4, includeMarkdown("text/about_center.md"),
+           tagList(
+             tags$h3("Aktualizace"),
+             "Poslední aktualizace dat proběhla ",
+             tags$b(format.Date(
+               as.Date(datestamp), "%-d. %-m. %Y"), .noWS = "after"),
+             ". Verze ", tags$b(version, .noWS = "after"), ".")),
     column(4, includeMarkdown("text/about_right.md"))),
   fluidRow(
     column(12, includeMarkdown("text/about_footer.md"))))

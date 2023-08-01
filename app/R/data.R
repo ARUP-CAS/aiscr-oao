@@ -50,6 +50,7 @@ oao_meta <- function(dsn, client_url) {
         !is.na(web), 
         paste0("<a target='_blank' href='", web, "'>",
                icon_ext_link, " ", web, "</a>"), ""),
+      web_app = paste0("https://oao.aiscr.cz/#!/detail?oao=", ico),
       mail0 = mail,
       mail = dplyr::if_else(
         !is.na(mail), 

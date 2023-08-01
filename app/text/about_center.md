@@ -3,10 +3,19 @@
 Aplikace je součástí infrastruktury 
 **Archeologický informační systém ČR** ([AIS CR](https://www.aiscr.cz/)) a  
 je provozována **Archeologickým ústavem AV ČR, Praha, v. v. i.** ([ARÚ](https://www.arup.cas.cz/)) a 
-**Archeologickým ústavem AV ČR, Brno, v. v. i.** ([ARÚB](https://arub.avcr.cz/)).  
-V případě potřeby nás prosím kontaktujte na emailu [info@amapa.cz](mailto:info@amapa.cz).
+**Archeologickým ústavem AV ČR, Brno, v. v. i.** ([ARÚB](https://arub.avcr.cz/)).
+
+### Zdroje 
+
+Informace o organizacích jsou čerpány přímo ze smluv uzavřených mezi **Akademií věd České Republiky** ([AV ČR](https://www.avcr.cz/)) a konkrétními organizacemi, veřejných rejstříků, webových stránek daných organizací a 
+[seznamu oprávnění](https://www.mkcr.cz/seznam-organizaci-opravnenych-k-provadeni-archeologickych-vyzkumu-278.html) 
+udělených **Ministerstvem kultury ČR** ([MK ČR](https://www.mkcr.cz/)).  
+Data o provedených výzkumech a jejich poloze jsou čerpána z 
+**Archeologické mapy ČR** ([AMČR](https://amcr-info.aiscr.cz/)).
 
 ### Správa dat a uživatelů
+
+V případě potřeby nás prosím kontaktujte na emailu [info@amapa.cz](mailto:info@amapa.cz).
 
 * Podpora pro oblast Čech:  
   **Archeologický ústav AV ČR, Praha, v. v. i.** [amcr@arup.cas.cz](mailto:amcr@arup.cas.cz);
@@ -16,10 +25,6 @@ V případě potřeby nás prosím kontaktujte na emailu [info@amapa.cz](mailto:
 ### Oznámení o stavebním záměru
 
 Pro oznámení o stavebním či jiném záměru využijte prosím online [formulář](https://amcr-info.aiscr.cz/oznameni).
-
-### Aktualizace
-
-Verze **1.1.0**. Poslední aktualizace dat proběhla **24. 7. 2023**.
 
 ### Citujte jako
 
