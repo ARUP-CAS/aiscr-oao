@@ -184,10 +184,9 @@ mapclick_server <- function(input, output, session) {
       req(get_query_param(field = "lat"))
       url_lat <- round(as.numeric(get_query_param(field = "lat")), 4)
       url_lng <- round(as.numeric(get_query_param(field = "lng")), 4)
-      values$coords <- list(
-        lat = url_lat, lng = url_lng)
+      values$coords <- list(lat = url_lat, lng = url_lng)
       values$sf <- sf::st_point(
-        c(url_lng, url_lat)) %>% 
+        c(url_lng, url_lat)) %>%
         sf::st_sfc(crs = 4326)
       # zoom
       leaflet::leafletProxy("clickmap") %>%
@@ -207,8 +206,8 @@ mapclick_server <- function(input, output, session) {
     }
   })
   
-  # # update url from point lat/lng - causes page blinking, not necessary
-  # observe({
+  # # update url from point lat/lng
+  # observeEvent(input$clickmap_click, {
   #   change_page(
   #     paste0(
   #       "#!/?lat=", values$coords$lat,
@@ -408,7 +407,7 @@ details_server <- function(input, output, session) {
         addPolygons(layerId = oao_grid_flt()$ctverec, color = ~pal(scaled),
                     stroke =  FALSE, fillOpacity = 0.6) %>%
         addControl("<img src='legend.png' width=110 height=40>",
-                   position = "bottomleft", layerId = "legend")
+                   position = "bottomright", layerId = "legend")
     }
   })
   
@@ -667,5 +666,5 @@ server <- function(input, output, session) {
 
 # app ---------------------------------------------------------------------
 
-shinyApp(ui, server, enableBookmarking = "url")
+shinyApp(ui, server)
 

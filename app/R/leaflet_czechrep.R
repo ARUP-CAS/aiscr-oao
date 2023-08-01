@@ -30,7 +30,7 @@ leaflet_czechrep <- function(data) {
         "Desaturovaná mapa", 
         "Open Street Map", 
         "Základní mapy ČR"),
-      options = leaflet::layersControlOptions(collapsed = TRUE))
+      options = leaflet::layersControlOptions(position = "bottomleft"))
 }
 
 
