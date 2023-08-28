@@ -31,7 +31,7 @@ Soubor pojmenovaný `oao_<IČO>_<datum aktualizace>.gpkg` obsahuje následujíc�
  o původní velikosti čtverců 5’ z. š. × 3’ z. d. (zhruba 6 × 5,5 km).
  
     - `ico` -- IČO organizace.
-    - `ctverec` -- Unikátní identifikáotor daného čtverce.
+    - `ctverec` -- Unikátní identifikátor daného čtverce.
     - `value` -- Počet výzkumů organizace v daném čtverci.
     - `scaled` -- Logarytmicky škálovaný počet výzkumů v daném čtverci.
 

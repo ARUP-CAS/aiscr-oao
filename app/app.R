@@ -25,7 +25,7 @@ sleep <- 0.4
 
 # change when data/app is updated
 datestamp <<- "2023-08-01"
-version <<- "2.0.0"
+appversion <<- "2.0.0"
 
 url_da <- "https://digiarchiv.aiscr.cz/results?entity=projekt&f_organizace="
 url_da_coords <- "https://digiarchiv.aiscr.cz/results?mapa=true&loc_rpt="
@@ -551,7 +551,7 @@ about_page <- div(
              "Poslední aktualizace dat proběhla ",
              tags$b(format.Date(
                as.Date(datestamp), "%-d. %-m. %Y"), .noWS = "after"),
-             ". Verze ", tags$b(version, .noWS = "after"), ".")),
+             ". Verze ", tags$b(appversion, .noWS = "after"), ".")),
     column(4, includeMarkdown("text/about_right.md"))),
   fluidRow(
     column(12, includeMarkdown("text/about_footer.md"))))
