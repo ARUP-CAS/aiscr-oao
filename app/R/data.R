@@ -10,7 +10,7 @@
 #' @examples
 oao_meta <- function(dsn, client_url) {
   sf::st_read(dsn = dsn) %>% 
-    sf::st_drop_geometry() %>% 
+    # sf::st_drop_geometry() %>% 
     dplyr::mutate(
       dplyr::across(dplyr::ends_with(c("from", "to")), \(x) format(x, "%d. %m. %Y")),
       # dplyr::across(dplyr::ends_with(c("from", "to")), \(x) stringr::str_replace_all(x, "\\s", "&nbsp")),
@@ -45,12 +45,18 @@ oao_meta <- function(dsn, client_url) {
             "Dohoda s AV ČR ", datum_av, "."),
           paste0(mk_id, ". Dohoda s AV ČR ", datum_av, ".")),
         "Oprávnění v plném rozsahu dle zákona o státní památkové péči."),
+      web0 = web,
       web = dplyr::if_else(
         !is.na(web), 
         paste0("<a target='_blank' href='", web, "'>",
-               icon("fas fa-external-link-alt"), " ", web, "</a>"),
-        "")) %>% 
-    dplyr::arrange(nazev)
+               icon_ext_link, " ", web, "</a>"), ""),
+      web_app = paste0("https://oao.aiscr.cz/#!/detail?oao=", ico),
+      mail0 = mail,
+      mail = dplyr::if_else(
+        !is.na(mail), 
+        paste0("<a target='_blank' href='mailto:", mail, "'>",
+               icon_mail, " ", mail, "</a>"), "")) %>% 
+    dplyr::arrange(nazev, .locale = "cs")
 }
 
 #' Wrapper around \code{sf::st_read}

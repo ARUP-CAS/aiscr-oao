@@ -11,7 +11,7 @@
 #' @examples
 leaflet_czechrep <- function(data) {
   data %>% leaflet::leaflet(
-    options = leaflet::leafletOptions(minZoom = 7, maxZoom = 14)) %>% 
+    options = leaflet::leafletOptions(minZoom = 7, maxZoom = 16)) %>% 
     leaflet::setView(zoom = 7, lng = 15.4730, lat = 49.8175) %>% 
     leaflet::setMaxBounds(11, 48, 20, 52) %>%
     leaflet::addTiles(group = "Open Street Map") %>% 
@@ -19,7 +19,8 @@ leaflet_czechrep <- function(data) {
       leaflet::providers$CartoDB.Positron, 
       group = "Desaturovaná mapa") %>% 
     leaflet::addTiles(
-      urlTemplate = paste0("http://ags.cuzk.cz/arcgis/rest/services/zmwm/",
+      urlTemplate = paste0("https://ags.cuzk.cz/arcgis1/rest/services/ZTM_WM/", 
+                           #"http://ags.cuzk.cz/arcgis/rest/services/zmwm/",
                            "MapServer/tile/{z}/{y}/{x}?blankTile=false"), 
       attribution = paste0("Základní Mapy ČR ©",
                            "<a href='https://www.cuzk.cz/' target = '_blank'>ČÚZK</a>"), 
@@ -29,17 +30,23 @@ leaflet_czechrep <- function(data) {
         "Desaturovaná mapa", 
         "Open Street Map", 
         "Základní mapy ČR"),
-      options = leaflet::layersControlOptions(collapsed = TRUE))
+      options = leaflet::layersControlOptions(position = "bottomleft"))
 }
 
 
-leaflet_czechrep_add_marker <- function(click) {
-  leafletProxy("clickmap") %>%
-    clearMarkers() %>%
-    addCircleMarkers(click$lng, click$lat, 
-                     color = "#3E3F3A", radius = 16, 
-                     stroke = TRUE, fillOpacity = 0.6,
-                     popup = "Zvolená poloha")
+leaflet_czechrep_add_marker <- function(click, url) {
+  leaflet::leafletProxy("clickmap") %>%
+    leaflet::clearMarkers() %>%
+    leaflet::addCircleMarkers(
+      layerId = "poi", click$lng, click$lat, 
+      color = "#3E3F3A", radius = 16, 
+      stroke = TRUE, fillOpacity = 0.6,
+      # popup = paste0(
+      #   tags$b("Zvolený bod"), tags$br(),
+      #   tags$a(
+      #     href = paste0(client_url(), "?lat=", click$lat, "&lng=", click$lng), 
+      #     click$lat, "N ", click$lng, "E"))
+      )
 }
 
 click2sf <- function(click) {
@@ -48,3 +55,10 @@ click2sf <- function(click) {
                crs = 4326)
 }
 
+leaflet_zoom <- function(ku, centroids) {
+  coords <- centroids[centroids$ku == ku, ] %>%
+    st_coordinates()
+  
+  leaflet::leafletProxy("clickmap") %>%
+    leaflet::setView(zoom = 14, lng = coords[1], lat = coords[2])
+}

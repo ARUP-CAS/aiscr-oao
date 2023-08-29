@@ -1,34 +1,37 @@
-## O Aplikaci
+## Data
 
-Aplikace je součástí infrastruktury 
-<a href="https://www.aiscr.cz/" target="_blank">Archeologický informační systém ČR</a> 
-(AIS CR) a<br> 
-je provozována 
-<a href="https://www.arup.cas.cz/" target="_blank">Archeologickým ústavem AV ČR, Praha, v. v. i.</a> 
-(ARÚ) a<br>
-<a href="https://arub.avcr.cz/" target="_blank">Archeologickým ústavem AV ČR, Brno, v. v. i.</a> 
-(ARÚB).<br>
-V případě potřeby nás prosím kontaktujte na emailu <a href=mailto:info@amapa.cz>info@amapa.cz</a>.
+Data pro jednotlivé organizace lze stáhnout ve formátu [GeoPackage (.gpkg)](https://www.geopackage.org/). 
+Data jsou zveřejněna pod licencí *Creative Commons Uveďte původ -- Neužívejte komerčně 4.0 Mezinárodní* 
+([<i class="fab fa-creative-commons" role="presentation" aria-label="creative-commons icon"></i><i class="fab fa-creative-commons-by" role="presentation" aria-label="creative-commons-by icon"></i><i class="fab fa-creative-commons-nc" role="presentation" aria-label="creative-commons-nc icon"></i> CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/)).
 
-### Správa dat a uživatelů
+### Struktura dat
 
-* Podpora pro oblast Čech:  
-  **Archeologický ústav AV ČR, Praha, v. v. i.** <a href=mailto:amcr@arup.cas.cz>amcr@arup.cas.cz</a>;
-* Podpora pro oblast Moravy a Slezska:  
-  **Archeologický ústav AV ČR, Brno, v. v. i.** <a href=mailto:amcr@arub.cz>amcr@arub.cz</a> (vč. kraje Vysočina).
+Soubor pojmenovaný `oao_<IČO>_<datum aktualizace>.gpkg` obsahuje následující vrstvy (převedené do S-JTSK, [EPSG:5514](https://epsg.io/5514)):
 
-### Zdroje dat
+- `OAO Metadata` -- Adresní bod vybrané organizace.
 
-Informace o organizacích jsou čerpány přímo ze smluv uzavřených s konkrétními organizacemi,   
-veřejných rejstříků, webových stránek daných organizací a 
-<a href="https://www.mkcr.cz/seznam-organizaci-opravnenych-k-provadeni-archeologickych-vyzkumu-278.html" target="_blank">seznamu oprávnění</a> udělených Ministerstvem kultury ČR.  
-Data o provedených výzkumech a jejich poloze jsou čerpána z 
-<a href="https://amcr-info.aiscr.cz/" target="_blank">Archeologické mapy ČR</a> (AMČR).
-
-Poslední aktualizace dat proběhla **5. 1. 2023**.
-
-### Oznámení o stavebním záměru
-
-Pro oznámení o stavebním či jiném záměru využijte prosím online formulář 
-<a href="https://amcr-info.aiscr.cz/oznameni" target="_blank">zde</a>.
+    - `ico` -- IČO organizace.
+    - `nazev_zkraceny` -- Název používaný v heslářích AMČR.
+    - `nazev` -- Oficiální název organizace.
+    - `adresa` -- Adresa organizace.
+    - `app` -- Odkaz na stránku organizace v této aplikaci.
+    - `web` -- Webové stránky organizace.
+    - `email` -- Emailová adresa organizace.
+    - `mk_id` -- Spisová značka oprávnění uděleného MK ČR.
+    - `mk_from` / `mk_to` / `mk_neomezena` -- Platnost oprávnění MK ČR.
+    - `av_from` / `av_to` / `av_neomezena` -- Platnost dohody s AV ČR.
+    - `note` -- Poznámka.
+    
+- `OAO Polygon` -- Polygon působnosti vybrané oragnizace.
+    
+    - `ico` -- IČO organizace.
+    - `area` -- Plocha polygonu působnosti organizace (km<sup>2</sup>).
+    
+- `OAO Grid` -- Čtvercová síť s počtem výzkumů organizace odvozená z čtvrtinových kvadrantů *Kartierung der Flora Mitteleuropas* (KFME) 
+ o původní velikosti čtverců 5’ z. š. × 3’ z. d. (zhruba 6 × 5,5 km).
+ 
+    - `ico` -- IČO organizace.
+    - `ctverec` -- Unikátní identifikátor daného čtverce.
+    - `value` -- Počet výzkumů organizace v daném čtverci.
+    - `scaled` -- Logarytmicky škálovaný počet výzkumů v daném čtverci.
 

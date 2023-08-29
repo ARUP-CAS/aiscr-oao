@@ -31,7 +31,11 @@ revised_gd_url <- "https://docs.google.com/spreadsheets/d/1knxDiUuCVqwgzgQkodhGg
 # bg data
 kraje <- RCzechia::kraje()
 okresy <- RCzechia::okresy()
-katastry <- sf::read_sf(here::here("data/raw/ruian_ku/", "SPH_KU.shp"), crs = 5514)
+
+# find file ku
+unz_files <- list.files(here::here("data/input/ruian"), recursive = TRUE, full.names = TRUE)
+p_ku <- unz_files[stringr::str_detect(unz_files, "KAT.+shp")]
+katastry <- sf::st_read(p_ku)
 
 # dataprep ----------------------------------------------------------------
 
@@ -98,7 +102,7 @@ oao_katastry <- oao_uzemi %>%
   filter(is_katastr) %>% 
   select(ico, katastr) %>% 
   separate2longer("katastr", 400) %>% 
-  left_join(katastry, by = c("value" = "NAZEV_KU")) %>% 
+  left_join(katastry, by = c("value" = "NAZEV")) %>% 
   add_polygon() %>% 
   sf::st_as_sf() %>% 
   sf::st_transform(4326)
@@ -113,9 +117,10 @@ oao_uzemi_poly <- oao_republika %>%
   mutate(data = map(data, sf::st_as_sf),
          data = map(data, sf::st_make_valid),
          data = map(data, sf::st_union),
-         data = map(data, nngeo::st_remove_holes, max_area = 1e4)) %>% 
+         data = map(data, nngeo::st_remove_holes, max_area = 1e4)
+         ) %>% 
   unnest(data) %>% 
-  ungroup(groups = ico) %>% 
+  ungroup() %>% 
   sf::st_as_sf()
 
 # valid geometry?
@@ -144,7 +149,8 @@ sf::st_write(oao_uzemi_poly,
 
 oao_uzemi_poly_simple <- sf::st_simplify(oao_uzemi_poly, 
                                          dTolerance = 150, 
-                                         preserveTopology = TRUE)
+                                         preserveTopology = TRUE) %>% 
+  nngeo::st_remove_holes(max_area = 1e6)
 
 if (file.exists(here::here("data/final", "oao_territory_poly_simple.geojson"))) {
   file.remove(here::here("data/final", "oao_territory_poly_simple.geojson"))

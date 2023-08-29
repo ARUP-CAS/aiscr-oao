@@ -8,8 +8,6 @@ library(googlesheets4)
 # paths -------------------------------------------------------------------
 
 dir_data <- here::here("data")
-# dir_raw <- paste0(dir_data, "/raw")
-# dir_der <- paste0(dir_data, "/derived")
 dir_fin <- paste0(dir_data, "/final")
 
 
@@ -59,8 +57,6 @@ oao_gd <- read_sheet(revised_gd_url, sheet = "oao_webapp") %>%
 
 
 # geocode address ---------------------------------------------------------
-
-# not implemented in the webapp yet
 
 address <- oao_gd %>%
   pull(adresa) %>%
@@ -126,7 +122,7 @@ oao_out <- oao_gd %>%
     # proper dates
     across(ends_with(c("from", "to")), \(x) lubridate::ymd(x))
   ) %>% 
-  select(ico, nazev_zkraceny, nazev, spec_text, adresa, web,
+  select(ico, nazev_zkraceny, nazev, spec_text, adresa, web, mail,
          starts_with(c("mk_", "av_")), note, uzemi)
 
 oao_out <- address %>%

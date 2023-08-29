@@ -9,6 +9,9 @@ library(sf)
 # grid
 grid <- RCzechia::KFME_grid("high")
 
+# poly
+poly <- st_read(here::here("data/final/oao_territory_poly.geojson"))
+
 # akce
 akce <- read_csv(here::here("data/processed", "pian_akce.csv"))
 proj <- read_csv(here::here("data/processed", "pian_proj.csv"))
@@ -80,7 +83,7 @@ pian_clean <- akce_clean %>% bind_rows(proj_clean)
 pian_clean$ico %in% ico %>% all()
 # pian_clean$ico[!pian_clean$ico %in% ico]
 
-# oao without any information in amcr
+# oao without NO information in amcr
 ico_mapping$label[!ico %in% pian_clean$ico] %>% as_tibble()
 
 # sf ----------------------------------------------------------------------
@@ -92,8 +95,6 @@ pian_sf <- pian_clean %>%
 
 
 # remove pian outside polygon --------------------
-
-poly <- st_read(here::here("data/final/oao_territory_poly.geojson"))
 
 ico_seq <- ico %>% factor() %>% levels()
 
