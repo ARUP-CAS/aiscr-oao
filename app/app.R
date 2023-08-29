@@ -24,7 +24,7 @@ source("R/dt_meta.R")
 sleep <- 0.4
 
 # change when data/app is updated
-datestamp <<- "2023-08-01"
+datestamp <<- "2023-08-29"
 appversion <<- "2.0.0"
 
 url_da <- "https://digiarchiv.aiscr.cz/results?entity=projekt&f_organizace="
@@ -53,7 +53,7 @@ oao_scope <- oao_sf("data/oao_scope.geojson")
 oao_grid <- oao_sf("data/oao_grid.geojson")
 
 ku_centroids <- oao_sf("data/ku.geojson") %>% 
-  dplyr::arrange(ku) %>% 
+  dplyr::arrange(ku, .locale = "cs") %>% 
   dplyr::transmute(ku = paste0(ku, " (okr. ", okr, ")"))
 
 oao_rep <- oao_scope %>% 
@@ -61,8 +61,8 @@ oao_rep <- oao_scope %>%
   sf::st_drop_geometry()
 
 oao_names_tab <- oao_meta %>% 
-  dplyr::select(ico, nazev) %>% 
-  dplyr::arrange(nazev)
+  dplyr::select(ico, nazev)
+  
 
 oao_names_vec <- oao_names_tab$nazev %>% 
   setNames(oao_names_tab$ico)

@@ -56,7 +56,7 @@ oao_meta <- function(dsn, client_url) {
         !is.na(mail), 
         paste0("<a target='_blank' href='mailto:", mail, "'>",
                icon_mail, " ", mail, "</a>"), "")) %>% 
-    dplyr::arrange(nazev)
+    dplyr::arrange(nazev, .locale = "cs")
 }
 
 #' Wrapper around \code{sf::st_read}
