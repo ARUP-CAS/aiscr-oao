@@ -149,7 +149,8 @@ sf::st_write(oao_uzemi_poly,
 
 oao_uzemi_poly_simple <- sf::st_simplify(oao_uzemi_poly, 
                                          dTolerance = 150, 
-                                         preserveTopology = TRUE)
+                                         preserveTopology = TRUE) %>% 
+  nngeo::st_remove_holes(max_area = 1e6)
 
 if (file.exists(here::here("data/final", "oao_territory_poly_simple.geojson"))) {
   file.remove(here::here("data/final", "oao_territory_poly_simple.geojson"))
