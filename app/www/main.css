@@ -1,3 +1,16 @@
+@font-face {
+    font-family: 'museo300';
+    src: url('museo300-regular-webfont.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'museo500';
+    src: url('museo500-regular-webfont.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
 
 .container-fluid {
   padding-right: 0px;
@@ -9,7 +22,7 @@
 }
 
 .navbar {
-  background-color: #3E3F3A;
+  background-color: #303641; /*#3E3F3A*/
   margin-bottom: 0px;
 }
 
@@ -27,6 +40,7 @@
 
 .navbar-brand {
   margin-bottom: 0px;
+  font-family: 'museo300', monospace;
 }
 
 .navbar-header {
@@ -42,12 +56,17 @@
 }
 
 hr {
-  border-top: 2px solid #3E3F3A80;
+  border-top: 2px solid #30364180;
 }
 
 code {
   color: #428BCA;
   background-color: #f3f1f7; 
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #303641;
+  font-family: 'museo500', monospace;
 }
 
 /*
