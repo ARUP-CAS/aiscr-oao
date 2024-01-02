@@ -24,7 +24,7 @@ source("R/dt_meta.R")
 sleep <- 0.4
 
 # change when data/app is updated
-datestamp <<- "2023-08-29"
+datestamp <<- "2024-01-02"
 appversion <<- "2.0.0"
 
 url_da <- "https://digiarchiv.aiscr.cz/results?entity=projekt&f_organizace="

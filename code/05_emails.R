@@ -75,8 +75,7 @@ write_email_disk <- function(x) {
         as.character(x[i, ]$minus6),
         x[i, ]$subj,
         x[i, ]$email
-      ), file = here::here(paste0("emailer/emails/", x[i, ]$type, x[i, ]$ico, ".txt")), append = FALSE
-    )
+      ), file = here::here(paste0("emailer/emails/", x[i, ]$type, x[i, ]$ico, ".txt")), append = FALSE)
   }
 }
 
