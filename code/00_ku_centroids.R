@@ -1,4 +1,4 @@
-# download data from cuzk and create centroids
+# download data from cuzk and create centroids for KU lookup
 
 library(sf)
 
