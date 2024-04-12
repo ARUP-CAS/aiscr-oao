@@ -24,7 +24,7 @@ source("R/dt_meta.R")
 sleep <- 0.4
 
 # change when data/app is updated
-datestamp <<- "2024-01-08"
+datestamp <<- "2024-04-12"
 appversion <<- "2.0.0"
 
 url_da <- "https://digiarchiv.aiscr.cz/results?entity=projekt&f_organizace="
@@ -53,7 +53,7 @@ oao_scope <- oao_sf("data/oao_scope.geojson")
 oao_grid <- oao_sf("data/oao_grid.geojson")
 
 ku_centroids <- oao_sf("data/ku.geojson") %>% 
-  dplyr::arrange(ku, .locale = "cs") %>% 
+  dplyr::arrange(ku) %>% 
   dplyr::transmute(ku = paste0(ku, " (okr. ", okr, ")"))
 
 oao_rep <- oao_scope %>% 
@@ -61,8 +61,8 @@ oao_rep <- oao_scope %>%
   sf::st_drop_geometry()
 
 oao_names_tab <- oao_meta %>% 
-  dplyr::select(ico, nazev)
-  
+  dplyr::select(ico, nazev) %>% 
+  dplyr::arrange(nazev, .locale = "cs")
 
 oao_names_vec <- oao_names_tab$nazev %>% 
   setNames(oao_names_tab$ico)
@@ -462,7 +462,7 @@ details_server <- function(input, output, session) {
           "<p>", uzemi, "</p>",
           "<p>Projekty vybrané organizace v ",
           "<a href='", url_da, 
-          stringr::str_replace_all(nazev, "\\s", "%20"), 
+          stringr::str_replace_all(nazev_zkraceny, "\\s", "%20"), 
           "'>", icon_ext_link, " Digitálním archivu AMČR", "</a></p>"))) %>% 
         dplyr::pull(text)
     }
