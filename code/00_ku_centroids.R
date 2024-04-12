@@ -40,7 +40,7 @@ check_dirs(p_proc)
 check_dirs(p_fin)
 
 # dl
-# options(timeout = 100)
+options(timeout = 120)
 download.file(url, p_zip)
 
 # unz
