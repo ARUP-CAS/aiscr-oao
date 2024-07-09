@@ -128,7 +128,7 @@ oao_out <- oao_gd %>%
 oao_out <- oao_out %>%
   left_join(address, by = join_by(adresa == address)) %>% 
   select(-type, -result) %>% 
-  st_as_sf()
+  sf::st_as_sf()
 
 # oao_uzemi_up <- oao_uzemi %>% 
 #   mutate(uzemi = if_else(is_republika, "Celé území ČR.", NA_character_),
