@@ -24,8 +24,8 @@ source("R/dt_meta.R")
 sleep <- 0.4
 
 # change when data/app is updated
-datestamp <<- "2024-07-09"
-appversion <<- "2.0.0"
+datestamp <<- "2024-07-10"
+appversion <<- "2.0.1"
 
 url_da <- "https://digiarchiv.aiscr.cz/results?entity=projekt&f_organizace="
 url_da_coords <- "https://digiarchiv.aiscr.cz/results?mapa=true&loc_rpt="
@@ -586,7 +586,7 @@ menubar <- tags$nav(
         a(href = route_link("list"),
           icon("fas fa-bars"), "Seznam organizací")),
       tags$li(
-        a(href = "https://amcr-info.aiscr.cz/oznameni",
+        a(href = "https://archeologickamapa.cz/oznameni",
           target = "_blank",
           icon_ext_link, "Oznámit stavební záměr")),
       tags$li(

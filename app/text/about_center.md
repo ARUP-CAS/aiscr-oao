@@ -22,10 +22,6 @@ V případě potřeby nás prosím kontaktujte na emailu [info@amapa.cz](mailto:
 * Podpora pro oblast Moravy a Slezska (vč. kraje Vysočina):  
   **Archeologický ústav AV ČR, Brno, v. v. i.** [amcr@arub.cz](mailto:amcr@arub.cz).
 
-### Oznámení o stavebním záměru
-
-Pro oznámení o stavebním či jiném záměru využijte prosím online [formulář](https://amcr-info.aiscr.cz/oznameni).
-
 ### Citujte jako
 
 Pajdla, P. 2023: Mapa archeologických organizací [*Map of Archaeological Organizations*].  
