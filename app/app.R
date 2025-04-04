@@ -24,11 +24,13 @@ source("R/dt_meta.R")
 sleep <- 0.4
 
 # change when data/app is updated
-datestamp <<- "2023-08-29"
-appversion <<- "2.0.0"
+datestamp <<- "2025-04-04"
+appversion <<- "2.1.0"
 
 url_da <- "https://digiarchiv.aiscr.cz/results?entity=projekt&f_organizace="
 url_da_coords <- "https://digiarchiv.aiscr.cz/results?mapa=true&loc_rpt="
+url_ror <- "https://ror.org/"
+url_api <- "https://api.aiscr.cz/2.1/oai?verb=GetRecord&metadataPrefix=oai_amcr&identifier=https://api.aiscr.cz/id/"
 
 icon_link <- icon("fas fa-link")
 icon_ext_link <<- icon("fas fa-external-link-alt")
@@ -62,7 +64,7 @@ oao_rep <- oao_scope %>%
 
 oao_names_tab <- oao_meta %>% 
   dplyr::select(ico, nazev)
-  
+
 
 oao_names_vec <- oao_names_tab$nazev %>% 
   setNames(oao_names_tab$ico)
@@ -434,7 +436,7 @@ details_server <- function(input, output, session) {
       oao_meta_flt() %>% 
         dplyr::select(ico, nazev_zkraceny, nazev, adresa, 
                       app = web_app, web = web0, email = mail0, 
-               starts_with("mk"), starts_with("av"), note) %>% 
+                      starts_with("mk"), starts_with("av"), note) %>% 
         sf_tempfile(file, layer = "OAO Metadata")
     }
   )
@@ -449,21 +451,34 @@ details_server <- function(input, output, session) {
       oao_meta_flt() %>% dplyr::transmute(
         text = HTML(paste0(
           "<h3>", nazev, "</h3>",
-          "<p>", web, "<br>", mail, "</p>",
-          "<p>IČO: ", ico, "</p>",
-          "<h4>Adresa</h4>",
-          "<p>", adresa, "</p>",
+          "<ul>",
+          "<li>", "<b>Web:</b> ", web, "</li>",
+          "<li>", "<b>Email:</b> ", mail, "</li>",
+          "<li>", "<b>Adresa:</b> ", adresa, "</li>",
+          "<li>", "<b>IČO:</b> ", ico, "</li>",
+          "<li>", "<b>ROR:</b> ", 
+          if_else(is.na(ror),
+                  "–",
+                  paste0("<a target=_blank href='", url_ror, ror,
+                         "'>", icon_ext_link, " ", ror, "</a><br>")), "</li>",
+          "<li>", "<b>AMČR:</b> ", 
+          if_else(is.na(amcr_id),
+                  "–<br>",
+                  paste0(amcr_id,
+                         "<ul><li>Záznam v <a target=_blank href='", url_api,
+                         amcr_id, "'> ", icon_ext_link, " AMČR API</a></li>",
+                         "<li>Projekty v <a target=_blank href='", url_da,
+                         amcr_id, ":or'> ", icon_ext_link, 
+                         " Digitálním archivu AMČR</a></li></ul>")), "</li>",
+          "</ul>",
           "<h4>Detaily oprávnění</h4>",
           "<p>", opravneni, "</p>",
           if (!is.na(note)) {
             paste0("<p>", note, "</p>")
           },
           "<h4>Územní působnost</h4>",
-          "<p>", uzemi, "</p>",
-          "<p>Projekty vybrané organizace v ",
-          "<a href='", url_da, 
-          stringr::str_replace_all(nazev, "\\s", "%20"), 
-          "'>", icon_ext_link, " Digitálním archivu AMČR", "</a></p>"))) %>% 
+          "<p>", uzemi, "</p>"
+        ))) %>% 
         dplyr::pull(text)
     }
   })

@@ -15,12 +15,6 @@ dir_fin <- paste0(dir_data, "/final")
 
 revised_gd_url <- "https://docs.google.com/spreadsheets/d/1knxDiUuCVqwgzgQkodhGg0vMe6w6LsKiGVqrsvi5dpw/edit#gid=0"
 
-# updated_gd_url <- "https://docs.google.com/spreadsheets/d/1RXXRGpgkrgtBhF9taEtCVuHxVIJcbeATF9RBxBtORJY/edit?usp=sharing"
-# gd_updated <- drive_get(updated_gd_url)
-
-# original_gd_url <- "https://docs.google.com/spreadsheets/d/1oeUfIfMG2nA5vDvxYRnvWuKtUUEuO-SxKLEB9f05lW8/edit#gid=1589848804"
-# gd_original <- drive_get(original_gd_url)
-
 
 # revised ----------------------------------------
 
@@ -109,7 +103,7 @@ address <- oao_gd %>%
 # uzemi textem ------------------------------------------------------------
 
 oao_out <- oao_gd %>% 
-  mutate(
+  dplyr::mutate(
     # string with uzemi
     uzemi = if_else(is_rep, "Celé území ČR.", NA_character_),
     uzemi = if_else(is_kraj, paste0(kraj, "."), uzemi),
@@ -122,7 +116,7 @@ oao_out <- oao_gd %>%
     # proper dates
     across(ends_with(c("from", "to")), \(x) lubridate::ymd(x))
   ) %>% 
-  select(ico, nazev_zkraceny, nazev, spec_text, adresa, web, mail,
+  select(ico, amcr_id, ror, nazev_zkraceny, nazev, spec_text, adresa, web, mail,
          starts_with(c("mk_", "av_")), note, uzemi)
 
 oao_out <- address %>%
