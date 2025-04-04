@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env shell
 
 # Script reads files from ./emails/ folder and 
 # if the todays date fits the date in the file,

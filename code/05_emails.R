@@ -66,6 +66,11 @@ write_email_html <- function(x) {
 #'
 #' @examples
 write_email_disk <- function(x) {
+  dir_emails <- here::here("emailer/emails/")
+  if (!dir.exists(dir_emails)) {
+    dir.create(dir_emails)
+  }
+  
   for (i in seq_along(x$ico)) {
     write_lines(
       c(
@@ -75,8 +80,7 @@ write_email_disk <- function(x) {
         as.character(x[i, ]$minus6),
         x[i, ]$subj,
         x[i, ]$email
-      ), file = here::here(paste0("emailer/emails/", x[i, ]$type, x[i, ]$ico, ".txt")), append = FALSE
-    )
+      ), file = here::here(paste0(dir_emails, "/", x[i, ]$type, x[i, ]$ico, ".txt")), append = FALSE)
   }
 }
 

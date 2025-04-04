@@ -119,9 +119,10 @@ oao_out <- oao_gd %>%
   select(ico, amcr_id, ror, nazev_zkraceny, nazev, spec_text, adresa, web, mail,
          starts_with(c("mk_", "av_")), note, uzemi)
 
-oao_out <- address %>%
-  select(-everything()) %>%
-  bind_cols(oao_out)
+oao_out <- oao_out %>%
+  left_join(address, by = join_by(adresa == address)) %>% 
+  select(-type, -result) %>% 
+  sf::st_as_sf()
 
 # oao_uzemi_up <- oao_uzemi %>% 
 #   mutate(uzemi = if_else(is_republika, "Celé území ČR.", NA_character_),

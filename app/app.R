@@ -24,6 +24,7 @@ source("R/dt_meta.R")
 sleep <- 0.4
 
 # change when data/app is updated
+
 datestamp <<- "2025-04-04"
 appversion <<- "2.1.0"
 
@@ -55,7 +56,7 @@ oao_scope <- oao_sf("data/oao_scope.geojson")
 oao_grid <- oao_sf("data/oao_grid.geojson")
 
 ku_centroids <- oao_sf("data/ku.geojson") %>% 
-  dplyr::arrange(ku, .locale = "cs") %>% 
+  dplyr::arrange(ku) %>% 
   dplyr::transmute(ku = paste0(ku, " (okr. ", okr, ")"))
 
 oao_rep <- oao_scope %>% 
@@ -63,8 +64,8 @@ oao_rep <- oao_scope %>%
   sf::st_drop_geometry()
 
 oao_names_tab <- oao_meta %>% 
-  dplyr::select(ico, nazev)
-
+  dplyr::select(ico, nazev) %>% 
+  dplyr::arrange(nazev, .locale = "cs")
 
 oao_names_vec <- oao_names_tab$nazev %>% 
   setNames(oao_names_tab$ico)
@@ -601,7 +602,7 @@ menubar <- tags$nav(
         a(href = route_link("list"),
           icon("fas fa-bars"), "Seznam organizací")),
       tags$li(
-        a(href = "https://amcr-info.aiscr.cz/oznameni",
+        a(href = "https://archeologickamapa.cz/oznameni",
           target = "_blank",
           icon_ext_link, "Oznámit stavební záměr")),
       tags$li(
