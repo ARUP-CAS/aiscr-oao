@@ -24,7 +24,7 @@ V případě potřeby nás prosím kontaktujte na emailu [info@amapa.cz](mailto:
 
 ### Citujte jako
 
-Pajdla, P. 2023: Mapa archeologických organizací [*Map of Archaeological Organizations*].  
+Pajdla, P. 2023: Mapa oprávněných archeologických organizací [*Map of Authorized Archaeological Organizations*].  
 DOI: [10.5281/zenodo.8178384](https://doi.org/10.5281/zenodo.8178384). 
 Zdrojový kód: [https://github.com/ARUP-CAS/aiscr-oao](https://github.com/ARUP-CAS/aiscr-oao), 
 aplikace: [https://oao.aiscr.cz/](https://oao.aiscr.cz/).

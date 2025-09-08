@@ -25,8 +25,8 @@ sleep <- 0.4
 
 # change when data/app is updated
 
-datestamp <<- "2025-04-04"
-appversion <<- "2.1.0"
+datestamp <<- "2025-09-08"
+appversion <<- "2.2.0"
 
 url_da <- "https://digiarchiv.aiscr.cz/results?entity=projekt&f_organizace="
 url_da_coords <- "https://digiarchiv.aiscr.cz/results?mapa=true&loc_rpt="
@@ -589,7 +589,7 @@ menubar <- tags$nav(
       class = "navbar-header",
       tags$a(
         class = "navbar-brand", href = "#!/",
-        icon("fas fa-map-marked-alt"), "Mapa archeologických organizací")),
+        icon("fas fa-map-marked-alt"), "Mapa oprávněných archeologických organizací")),
     tags$ul(
       class = "nav navbar-nav",
       tags$li(
