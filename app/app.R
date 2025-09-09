@@ -563,11 +563,20 @@ about_page <- div(
     column(3, includeMarkdown("text/about_left.md")),
     column(4, includeMarkdown("text/about_center.md"),
            tagList(
-             tags$h3("Aktualizace"),
+             tags$h4("Cookies"),
+             "Aplikace používá pouze analytické cookies pro sledování návštěvnosti 
+             stránek. Návštěvnost služeb provozovaných infrastrukturou AIS CR 
+             je důležitým údajem vykazování využití AIS CR komunitou. V souladu 
+             s platnou legislativou prosíme o potvrzení souhlasu s využíváním 
+             analytických cookies.             ",
+             actionLink("reset_consent", "Resetovat cookies"),
+             tags$h4("Aktualizace"),
              "Poslední aktualizace dat proběhla ",
              tags$b(format.Date(
                as.Date(datestamp), "%-d. %-m. %Y"), .noWS = "after"),
-             ". Verze ", tags$b(appversion, .noWS = "after"), ".")),
+             ". Verze ", tags$b(appversion, .noWS = "after"), "."
+             ),
+           ),
     column(4, includeMarkdown("text/about_right.md"))),
   fluidRow(
     column(12, includeMarkdown("text/about_footer.md"))))
@@ -641,13 +650,22 @@ menubar <- tags$nav(
 ui <- fluidPage(
   title = "Mapa OAO",
   theme = "main.css",
-  tags$head(includeHTML("google-analytics.html")),
+  
+  tags$head(
+    # CookieConsent
+    tags$link(rel = "stylesheet",
+              href = "https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.1/cookieconsent.min.css"),
+    tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.1/cookieconsent.min.js"),
+    tags$script(src = "cookie-consent.js")
+  ),
+  
   menubar,
   router_ui(
     route("/", mapclick_page),
     route("detail", details_page),
     route("list", list_page),
-    route("about", about_page)))
+    route("about", about_page)),
+)
 
 
 # server ------------------------------------------------------------------
@@ -664,14 +682,27 @@ server <- function(input, output, session) {
            client$url_port, client$url_pathname, "#!/")
   })
   
+  # Handle both accept and deny consent
+  observeEvent(input$analytics_consent, {
+    if (isTRUE(input$analytics_consent)) {
+      session$sendCustomMessage('load-ua', list())  
+    } else if (isFALSE(input$analytics_consent)) {
+      session$sendCustomMessage('remove-ua', list())
+    }
+  }, ignoreInit = TRUE)
+  
+  # Reset button - use the new reset handler
+  observeEvent(input$reset_consent, {
+    session$sendCustomMessage('reset-consent', list())
+  })
+  
   mapclick_server(input, output, session)
   
   details_server(input, output, session)
   
   list_server(input, output, session)
   
-  # greeter ----
-  
+  # greeter
   greeter <- modalDialog(
     title = "Organizace s oprávněním provádět archeologický výzkum",
     easyClose = TRUE, 
