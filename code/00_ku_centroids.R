@@ -53,6 +53,7 @@ p_ku_in <- paste0(p_unz, unz_files[stringr::str_detect(unz_files, "KAT.+shp")])
 # okr
 okr <- RCzechia::okresy() %>% 
   st_drop_geometry() %>% 
+  ungroup() %>% 
   dplyr::select(KOD_LAU1, NAZ_LAU1)
 
 
@@ -70,6 +71,8 @@ ku_centroids <- ku %>%
   st_transform(4326) %>% 
   st_simplify() %>% 
   dplyr::select(ku = NAZEV, okr = NAZ_LAU1)
+
+# plot(st_geometry(ku_centroids))
 
 # output ------------------------------------------------------------------
 
