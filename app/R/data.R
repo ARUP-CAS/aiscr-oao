@@ -50,12 +50,13 @@ oao_meta <- function(dsn, client_url) {
         !is.na(web), 
         paste0("<a target='_blank' href='", web, "'>",
                icon_ext_link, " ", web, "</a>"), ""),
-      web_app = paste0("https://oao.aiscr.cz/#!/detail?oao=", ico),
-      mail0 = mail,
-      mail = dplyr::if_else(
-        !is.na(mail), 
-        paste0("<a target='_blank' href='mailto:", mail, "'>",
-               icon_mail, " ", mail, "</a>"), "")) %>% 
+      web_app = paste0("https://oao.aiscr.cz/#!/detail?oao=", amcr_id),
+      mail0 = email,
+      email = dplyr::if_else(
+        !is.na(email), 
+        paste0("<a target='_blank' href='mailto:", email, "'>",
+               icon_mail, " ", email, "</a>"), ""),
+      ror = if_else(!is.na(ror), str_remove(ror, "https://ror.org/"), ror)) %>% 
     dplyr::arrange(nazev, .locale = "cs")
 }
 
@@ -73,5 +74,5 @@ oao_sf <- function(dsn) {
 
 oao_filter <- function(data, oao) {
   data %>% 
-    dplyr::filter(ico %in% oao)
+    dplyr::filter(amcr_id %in% oao)
 }

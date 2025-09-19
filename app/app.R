@@ -25,8 +25,8 @@ sleep <- 0.4
 
 # change when data/app is updated
 
-datestamp <<- "2025-09-08"
-appversion <<- "2.2.0"
+datestamp <<- "2025-09-19"
+appversion <<- "3.0.0"
 
 url_da <- "https://digiarchiv.aiscr.cz/results?entity=projekt&f_organizace="
 url_da_coords <- "https://digiarchiv.aiscr.cz/results?mapa=true&loc_rpt="
@@ -44,7 +44,7 @@ icon_mail <<- icon("far fa-envelope")
 select_oao <- function(inputId, label, multiple = FALSE) {
   selectInput(inputId, label, 
               choices = c(Vyberte = "", 
-                          setNames(oao_names_tab$ico, 
+                          setNames(oao_names_tab$amcr_id, 
                                    oao_names_tab$nazev)),
               selectize = TRUE, multiple = multiple, width = "100%")
 }
@@ -64,11 +64,11 @@ oao_rep <- oao_scope %>%
   sf::st_drop_geometry()
 
 oao_names_tab <- oao_meta %>% 
-  dplyr::select(ico, nazev) %>% 
+  dplyr::select(amcr_id, nazev) %>% 
   dplyr::arrange(nazev, .locale = "cs")
 
 oao_names_vec <- oao_names_tab$nazev %>% 
-  setNames(oao_names_tab$ico)
+  setNames(oao_names_tab$amcr_id)
 
 
 # mapclick page -----------------------------------------------------------
@@ -254,9 +254,9 @@ mapclick_server <- function(input, output, session) {
   output$tab_rep <- renderTable({
     if (!is.null(values$sf)) {
       oao_rep %>% 
-        dplyr::mutate(name = oao_names_vec[ico],
+        dplyr::mutate(name = oao_names_vec[amcr_id],
                       link = paste0("<a href='", client_url(), 
-                                    "detail?oao=", ico, "/'>", 
+                                    "detail?oao=", amcr_id, "/'>", 
                                     icon_map_link, "</a>")) %>% 
         dplyr::select(Detail = link, Organizace = name)
     }
@@ -435,7 +435,7 @@ details_server <- function(input, output, session) {
       oao_scope_flt() %>% 
         sf_tempfile(file, layer = "OAO Polygon")
       oao_meta_flt() %>% 
-        dplyr::select(ico, nazev_zkraceny, nazev, adresa, 
+        dplyr::select(amcr_id, nazev_zkraceny, nazev, adresa, 
                       app = web_app, web = web0, email = mail0, 
                       starts_with("mk"), starts_with("av"), note) %>% 
         sf_tempfile(file, layer = "OAO Metadata")
@@ -447,14 +447,14 @@ details_server <- function(input, output, session) {
   output$detail <- renderText({
     req(input$oao)
     if (!is.na(oao_meta_flt()$spec_text)) {
-      includeHTML(paste0("text/", oao_meta_flt()$spec_text, ".html"))
+      includeHTML(paste0("text/oao-", oao_meta_flt()$spec_text, ".html"))
     } else {
       oao_meta_flt() %>% dplyr::transmute(
         text = HTML(paste0(
           "<h3>", nazev, "</h3>",
           "<ul>",
           "<li>", "<b>Web:</b> ", web, "</li>",
-          "<li>", "<b>Email:</b> ", mail, "</li>",
+          "<li>", "<b>Email:</b> ", email, "</li>",
           "<li>", "<b>Adresa:</b> ", adresa, "</li>",
           "<li>", "<b>IČO:</b> ", ico, "</li>",
           "<li>", "<b>ROR:</b> ", 
@@ -488,7 +488,7 @@ details_server <- function(input, output, session) {
     req(input$oao)
     HTML(paste0(
       "Zvolená organizace: <a href=", client_url(), "detail?oao=", input$oao, ">", 
-      icon_link, " <b>", oao_names_tab[oao_names_tab$ico == input$oao, ]$nazev, 
+      icon_link, " <b>", oao_names_tab[oao_names_tab$amcr_id == input$oao, ]$nazev, 
       "</b></a><br>"))
   })
   

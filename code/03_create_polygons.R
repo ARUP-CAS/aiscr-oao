@@ -13,20 +13,18 @@ separate2longer <- function(x, col, ncol) {
 }
 
 add_polygon <- function(x) {
-  x %>% select(ico, geometry) %>% 
-    group_by(ico) %>% 
+  x %>% select(amcr_id, geometry) %>% 
+    group_by(amcr_id) %>% 
     nest() %>% 
     mutate(data = map(data, sf::st_as_sf),
            data = map(data, sf::st_union)) %>% 
     unnest(data)
 }
 
+
 # data --------------------------------------------------------------------
 
-revised_gd_url <- "https://docs.google.com/spreadsheets/d/1knxDiUuCVqwgzgQkodhGg0vMe6w6LsKiGVqrsvi5dpw/edit#gid=0"
-
-# updated_gd_url <- "https://docs.google.com/spreadsheets/d/1RXXRGpgkrgtBhF9taEtCVuHxVIJcbeATF9RBxBtORJY/edit?usp=sharing"
-# gd_updated <- drive_get(updated_gd_url)
+url <- "https://docs.google.com/spreadsheets/d/1knxDiUuCVqwgzgQkodhGg0vMe6w6LsKiGVqrsvi5dpw/edit#gid=0"
 
 # bg data
 kraje <- RCzechia::kraje()
@@ -37,23 +35,11 @@ unz_files <- list.files(here::here("data/input/ruian"), recursive = TRUE, full.n
 p_ku <- unz_files[stringr::str_detect(unz_files, "KAT.+shp")]
 katastry <- sf::st_read(p_ku)
 
-# dataprep ----------------------------------------------------------------
-
-# # oao s platnou dohodou
-# oao_platne <- read_sheet(gd_updated, sheet = "Dohody_pracovni") %>% 
-#   filter(dohoda_platna == 1) %>% 
-#   pull(nazev_zkraceny)
-
-# # correct names
-# heslar <- read_csv(here::here("data/raw", "heslar_organizace.csv"))
-# # NOTE: Manually added NZM Praha to heslar + MU Brno
-# oao_platne[!oao_platne %in% heslar$nazev_zkraceny]
-# # heslar %>% filter(str_detect(nazev_zkraceny, "Národní"))
 
 # uzemni pusobnost --------------------------------------------------------
 
-oao_uzemi <- googlesheets4::read_sheet(revised_gd_url, sheet = "oao_webapp") %>% 
-  select(ico, app, nazev_zkraceny, starts_with("is"), kraj, okres, katastr) %>% 
+oao_uzemi <- googlesheets4::read_sheet(url, sheet = "oao_webapp") %>% 
+  select(amcr_id, app, nazev_zkraceny, starts_with("is"), kraj, okres, katastr) %>% 
   filter(app) %>% 
   select(-app)
 
@@ -64,15 +50,15 @@ oao_uzemi <- googlesheets4::read_sheet(revised_gd_url, sheet = "oao_webapp") %>%
 # republika
 oao_republika <- oao_uzemi %>% 
   filter(is_rep) %>% 
-  select(ico) %>% 
+  select(amcr_id) %>% 
   bind_cols(RCzechia::republika()) %>% 
-  select(ico, data = geometry) %>% 
+  select(amcr_id, data = geometry) %>% 
   sf::st_as_sf()
 
 # kraje
 oao_kraje <- oao_uzemi %>% 
   filter(is_kraj) %>% 
-  select(ico, kraj) %>% 
+  select(amcr_id, kraj) %>% 
   separate2longer("kraj", 10) %>% 
   left_join(kraje, by = c("value" = "NAZ_CZNUTS3")) %>% 
   add_polygon() %>% 
@@ -81,7 +67,7 @@ oao_kraje <- oao_uzemi %>%
 # okresy
 oao_okresy <- oao_uzemi %>% 
   filter(is_okres) %>% 
-  select(ico, okres) %>% 
+  select(amcr_id, okres) %>% 
   separate2longer("okres", 30) %>% 
   left_join(okresy, by = c("value" = "NAZ_LAU1")) %>% 
   add_polygon() %>% 
@@ -100,7 +86,7 @@ oao_okresy <- oao_uzemi %>%
 # katastry
 oao_katastry <- oao_uzemi %>% 
   filter(is_katastr) %>% 
-  select(ico, katastr) %>% 
+  select(amcr_id, katastr) %>% 
   separate2longer("katastr", 400) %>% 
   left_join(katastry, by = c("value" = "NAZEV")) %>% 
   add_polygon() %>% 
@@ -112,13 +98,14 @@ oao_uzemi_poly <- oao_republika %>%
   bind_rows(oao_kraje) %>% 
   bind_rows(oao_okresy) %>% 
   bind_rows(oao_katastry) %>% 
-  group_by(ico) %>% 
+  group_by(amcr_id) %>% 
   nest() %>% 
-  mutate(data = map(data, sf::st_as_sf),
-         data = map(data, sf::st_make_valid),
-         data = map(data, sf::st_union),
-         data = map(data, nngeo::st_remove_holes, max_area = 1e4)
-         ) %>% 
+  mutate(
+    data = map(data, sf::st_as_sf),
+    data = map(data, sf::st_make_valid),
+    data = map(data, sf::st_union),
+    data = map(data, nngeo::st_remove_holes, max_area = 1e4)
+  ) %>% 
   unnest(data) %>% 
   ungroup() %>% 
   sf::st_as_sf()
@@ -127,7 +114,7 @@ oao_uzemi_poly <- oao_republika %>%
 sf::st_is_valid(oao_uzemi_poly) %>% all()
 
 # missing polygons
-all(oao_uzemi$ico %in% oao_uzemi_poly$ico)
+all(oao_uzemi$amcr_id %in% oao_uzemi_poly$amcr_id)
 
 
 # total covered area (arranging in tables) --------------------------------

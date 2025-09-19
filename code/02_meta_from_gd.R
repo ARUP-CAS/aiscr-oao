@@ -16,12 +16,9 @@ dir_fin <- paste0(dir_data, "/final")
 gd_url <- "https://docs.google.com/spreadsheets/d/1knxDiUuCVqwgzgQkodhGg0vMe6w6LsKiGVqrsvi5dpw/edit#gid=0"
 
 oao_gd <- read_sheet(gd_url, sheet = "oao_webapp") %>% 
-  # remove space from PSČ to geocode addresses properly
-  mutate(adresa = str_remove(adresa, "(?<=\\d{3})\\s(?=\\d{2})")) %>% 
   filter(app) %>% 
   select(
     amcr_id, app, web, 
-    adresa_gd = adresa, ico_gd = ico, # NZM missing in AMCR
     starts_with("mk"), starts_with("av"), amcr, 
     starts_with("is"), kraj, okres, katastr, note, spec_text
   )
@@ -37,12 +34,11 @@ oao_api <- list.files(paste0(dir_data, "/input/"), pattern = "org", full.names =
   pull(value) %>% 
   read_csv(.)
 
-# OAO bez mezery v PSČ
-oao_api %>%
-  select(amcr_id, nazev_zkraceny, adresa) %>%
-  mutate(psc_space = str_detect(adresa, "\\d{3}\\s\\d{2}")) %>%
-  filter(!psc_space) %>%
-  write_excel_csv(here::here("data/api_psc_missing_space.csv"))
+# # data from API for GD table update
+# oao_api %>%
+#   arrange(nazev_zkraceny) %>%
+#   select(nazev_zkraceny, nazev, amcr_id, oao) %>%
+#   write_excel_csv(here::here("data/api4gd.csv"))
 
 
 # join tables -------------------------------------------------------------
@@ -51,18 +47,24 @@ oao_api %>%
 # oao_gd[!oao_gd$amcr_id %in% oao_api$amcr_id, ]
 
 # orgs labeled as OAO in AMCR, but not in App
-filter(oao_api, oao == TRUE) %>%
-  filter(!amcr_id %in% oao_gd$amcr_id) %>% View()
+# filter(oao_api, oao == TRUE) %>%
+#   filter(!amcr_id %in% oao_gd$amcr_id) %>% View()
 #   write_excel_csv(here::here("data/api_not_in_gd.csv"))
 
 oao <- oao_gd %>% 
   left_join(oao_api, by = join_by("amcr_id")) %>% 
-  mutate(
-    adresa = if_else(is.na(adresa), adresa_gd, adresa), # NZM missing in AMCR
-    ico = if_else(is.na(ico), ico_gd, ico), # NZM missing in AMCR
-    adresa2 = str_remove(adresa, "(?<=\\d{3})\\s(?=\\d{2})")) %>% 
-  select(-adresa_gd) %>% 
+  mutate(adresa2 = str_remove(adresa, "(?<=\\d{3})\\s(?=\\d{2})")) %>% 
   arrange(nazev_zkraceny)
+
+
+# checks ------------------------------------------------------------------
+
+# # OAO bez mezery v PSČ
+# oao %>%
+#   select(amcr_id, nazev_zkraceny, adresa) %>%
+#   mutate(psc_space = str_detect(adresa, "\\d{3}\\s\\d{2}")) %>%
+#   filter(!psc_space) %>%
+#   write_excel_csv(here::here("data/api_psc_missing_space.csv"))
 
 # geocode address ---------------------------------------------------------
 
@@ -94,24 +96,24 @@ address <- oao %>%
 #' @export
 #'
 #' @examples
-ares_name <- function(ico) {
-  Sys.sleep(0.01)
-  url <- "https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty/"
-  
-  res <- jsonlite::read_json(paste0(url, ico))
-  res$obchodniJmeno
-}
-
-oao_ares <- oao %>%
-  select(amcr_id, nazev_zkraceny, nazev, ico) %>% 
-  mutate(ico = str_pad(ico, width = 8, pad = "0", side = "left"),
-         nazev_ares = map_chr(ico, \(x) ares_name(x)),
-         ares = nazev != nazev_ares) %>% 
-  filter(ares)
-
-oao_ares
-
-# oao_ares %>% 
+# ares_name <- function(ico) {
+#   Sys.sleep(0.01)
+#   url <- "https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty/"
+#   
+#   res <- jsonlite::read_json(paste0(url, ico))
+#   res$obchodniJmeno
+# }
+# 
+# oao_ares <- oao %>%
+#   select(amcr_id, nazev_zkraceny, nazev, ico) %>% 
+#   mutate(ico = str_pad(ico, width = 8, pad = "0", side = "left"),
+#          nazev_ares = map_chr(ico, \(x) ares_name(x)),
+#          ares = nazev != nazev_ares) %>% 
+#   filter(ares)
+# 
+# oao_ares
+# 
+# oao_ares %>%
 #   write_csv(here::here("data/api_names_ares.csv"))
 
 # uzemi textem ------------------------------------------------------------
@@ -130,12 +132,14 @@ oao_out <- oao %>%
     # proper dates
     across(ends_with(c("from", "to")), \(x) lubridate::ymd(x))
   ) %>% 
-  select(ico, amcr_id, ror, nazev_zkraceny, nazev, spec_text, adresa, web, email,
-         starts_with(c("mk_", "av_")), note, uzemi)
+  select(amcr_id, ror, ico, nazev_zkraceny, nazev, spec_text, 
+         adresa, adresa2, web, email, telefon, typ,
+         zverejneni, pristupnost,
+         starts_with(c("mk_", "av_")), amcr, note, uzemi)
 
 oao_out <- oao_out %>%
-  left_join(address, by = join_by(adresa == address)) %>% 
-  select(-type, -result) %>% 
+  left_join(address, by = join_by(adresa2 == address)) %>% 
+  select(-type, -result, -adresa2) %>% 
   sf::st_as_sf()
 
 # oao_uzemi_up <- oao_uzemi %>% 
