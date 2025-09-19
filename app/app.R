@@ -329,7 +329,7 @@ details_page <- div(
         column(
           4, checkboxInput("grid", "Zobrazit akce", value = TRUE)),
         column(
-          4, checkboxInput("addr", "Zobrazit adresu", value = FALSE))),
+          4, checkboxInput("addr", "Zobrazit sídlo", value = FALSE))),
       tags$hr(),
       uiOutput("detail"),
       uiOutput("link"),
@@ -499,10 +499,14 @@ details_server <- function(input, output, session) {
         icon("far fa-save"), " <b>Stáhnout data</b>"))),
       HTML(paste0(
         " (formát <i>.gpkg</i>, podléhá licenci ",
-        "<a href=https://creativecommons.org/licenses/by-nc/4.0/>", 
+        # "<a href=https://creativecommons.org/licenses/by-nc/4.0/>", 
+        "<a href=https://creativecommons.org/licenses/by/4.0/>", 
         icon("fab fa-creative-commons"), 
         icon("fab fa-creative-commons-by"),
-        icon("fab fa-creative-commons-nc"), " CC BY-NC 4.0</a>)")))
+        # icon("fab fa-creative-commons-nc"), 
+        # " CC BY-NC 4.0</a>)"
+        " CC BY 4.0</a>)"
+        )))
   })
   
   # map
@@ -655,6 +659,12 @@ ui <- fluidPage(
     # CookieConsent
     tags$link(rel = "stylesheet",
               href = "https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.1/cookieconsent.min.css"),
+    tags$link(rel = "preconnect", 
+              href = "https://fonts.googleapis.com"),
+    tags$link(rel = "preconnect",
+              href = "https://fonts.gstatic.com"),
+    tags$link(rel = "stylesheet",
+              href = "https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Karla:ital,wght@0,200..800;1,200..800&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap"),
     tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.1/cookieconsent.min.js"),
     tags$script(src = "cookie-consent.js")
   ),

@@ -1,10 +1,10 @@
-## Data
+### Data
 
 Data pro jednotlivé organizace lze stáhnout ve formátu [GeoPackage (.gpkg)](https://www.geopackage.org/). 
-Data jsou zveřejněna pod licencí *Creative Commons Uveďte původ -- Neužívejte komerčně 4.0 Mezinárodní* 
-([<i class="fab fa-creative-commons" role="presentation" aria-label="creative-commons icon"></i><i class="fab fa-creative-commons-by" role="presentation" aria-label="creative-commons-by icon"></i><i class="fab fa-creative-commons-nc" role="presentation" aria-label="creative-commons-nc icon"></i> CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/)).
+Data jsou zveřejněna pod licencí *Creative Commons Uveďte původ 4.0 Mezinárodní* 
+([<i class="fab fa-creative-commons" role="presentation" aria-label="creative-commons icon"></i><i class="fab fa-creative-commons-by" role="presentation" aria-label="creative-commons-by icon"></i> CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)).
 
-### Struktura dat
+#### Struktura dat
 
 Soubor pojmenovaný `oao_<IČO>_<datum aktualizace>.gpkg` obsahuje následující vrstvy (převedené do S-JTSK, [EPSG:5514](https://epsg.io/5514)):
 
