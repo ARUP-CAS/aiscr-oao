@@ -37,7 +37,6 @@
 
 .navbar-nav {
   padding: 15px 0px;
-  font-variant: small-caps;
   letter-spacing: 0.6px;
 }
 
@@ -88,6 +87,18 @@ h3, h4, h5, h6 {
   font-weight: 500;
   font-style: normal;
 }
+
+/* ---- TABLE ---- */
+/* table {
+  margin: auto; 
+  border-top: 1px solid #666;
+  border-bottom: 1px solid #666;
+} */
+/* table thead th { border-bottom: 1px solid #ddd; } */
+th, td { padding: 5px; }
+thead, tfoot,  { background: #eee; } /* tr:nth-child(even) */
+
+
 
 /*
 .js-irs-0 .irs-single, .js-irs-0 .irs-bar-edge, .js-irs-0 .irs-bar {

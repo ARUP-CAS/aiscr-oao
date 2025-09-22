@@ -28,10 +28,13 @@ sleep <- 0.4
 datestamp <<- "2025-09-19"
 appversion <<- "3.0.0"
 
-url_da <- "https://digiarchiv.aiscr.cz/results?entity=projekt&f_organizace="
+url_da <<- "https://digiarchiv.aiscr.cz/results?entity=projekt&f_organizace="
+url_da_akce <<- "https://digiarchiv.aiscr.cz/results?entity=akce&f_organizace="
+url_da_nalezy <<- "https://digiarchiv.aiscr.cz/results?entity=samostatny_nalez&f_organizace="
+url_da_dokumenty <<- "https://digiarchiv.aiscr.cz/results?entity=dokument&f_organizace="
 url_da_coords <- "https://digiarchiv.aiscr.cz/results?mapa=true&loc_rpt="
-url_ror <- "https://ror.org/"
-url_api <- "https://api.aiscr.cz/2.1/oai?verb=GetRecord&metadataPrefix=oai_amcr&identifier=https://api.aiscr.cz/id/"
+url_ror <<- "https://ror.org/"
+url_api <<- "https://api.aiscr.cz/2.2/oai?verb=GetRecord&metadataPrefix=oai_amcr&identifier=https://api.aiscr.cz/id/"
 
 icon_link <- icon("fas fa-link")
 icon_ext_link <<- icon("fas fa-external-link-alt")
@@ -449,31 +452,14 @@ details_server <- function(input, output, session) {
     if (!is.na(oao_meta_flt()$spec_text)) {
       includeHTML(paste0("text/oao-", oao_meta_flt()$spec_text, ".html"))
     } else {
+      detail_table <- oao_meta_flt() %>% 
+        detail_table()
       oao_meta_flt() %>% dplyr::transmute(
         text = HTML(paste0(
           "<h3>", nazev, "</h3>",
-          "<ul>",
-          "<li>", "<b>Web:</b> ", web, "</li>",
-          "<li>", "<b>Email:</b> ", email, "</li>",
-          "<li>", "<b>Adresa:</b> ", adresa, "</li>",
-          "<li>", "<b>IČO:</b> ", ico, "</li>",
-          "<li>", "<b>ROR:</b> ", 
-          if_else(is.na(ror),
-                  "–",
-                  paste0("<a target=_blank href='", url_ror, ror,
-                         "'>", icon_ext_link, " ", ror, "</a><br>")), "</li>",
-          "<li>", "<b>AMČR:</b> ", 
-          if_else(is.na(amcr_id),
-                  "–<br>",
-                  paste0(amcr_id,
-                         "<ul><li>Záznam v <a target=_blank href='", url_api,
-                         amcr_id, "'> ", icon_ext_link, " AMČR API</a></li>",
-                         "<li>Projekty v <a target=_blank href='", url_da,
-                         amcr_id, ":or'> ", icon_ext_link, 
-                         " Digitálním archivu AMČR</a></li></ul>")), "</li>",
-          "</ul>",
-          "<h4>Detaily oprávnění</h4>",
-          "<p>", opravneni, "</p>",
+          detail_table, 
+          "<h4>Detaily</h4>",
+          "<p>", opravneni, " ", amcr_note, " ", amcr_zverejneni, "</p>",
           if (!is.na(note)) {
             paste0("<p>", note, "</p>")
           },
@@ -664,7 +650,7 @@ ui <- fluidPage(
     tags$link(rel = "preconnect",
               href = "https://fonts.gstatic.com"),
     tags$link(rel = "stylesheet",
-              href = "https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Karla:ital,wght@0,200..800;1,200..800&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap"),
+              href = "https://fonts.googleapis.com/css2?family=Alegreya+Sans+SC:wght@400;500;700&family=Fira+Sans:wght@400;500;700&display=swap"),
     tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.1/cookieconsent.min.js"),
     tags$script(src = "cookie-consent.js")
   ),

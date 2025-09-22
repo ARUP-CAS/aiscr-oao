@@ -17,20 +17,23 @@ dt_create <- function(data) {
         " " = "link_map",
         "Organizace" = "nazev",
         "AMČR ID" = "amcr_id",
-        "IČO" = "ico",
+        "Typ organizace" = "typ",
+        # "IČO" = "ico",
         "Webové stránky" = "web",
         "Email" = "email",
+        "Telefon" = "telefon",
         # "Adresa" = "adresa",
         "Platnost oprávnění<br>MK ČR" = "mk_to",
-        "Platnost dohody<br>s AV ČR" = "av_to"),
+        "Platnost dohody<br>s AV ČR" = "av_to",
+        "Dohoda o<br>užívání AMČR" = "amcr"),
       options = list(
         dom = "t",
         deferRender = TRUE,
         scrollY = "calc(100vh - 340px)",
-        scroller = TRUE
-        # columnDefs = list(
-        #   list(className = 'dt-right', targets = c(0)),
-        #   list(className = 'dt-center', targets = c(3, 4, 7, 8)))
+        scroller = TRUE,
+        columnDefs = list(
+          # list(className = 'dt-right', targets = c(0)),
+          list(className = 'dt-center', targets = c(0, 7:9)))
       )
     )
 }
@@ -50,14 +53,16 @@ dt_data_prep <- function(data, url) {
       # adresa = str_replace(adresa, ", ", "<br>"),
       dplyr::across(
         c("nazev"),
-        \(x) stringr::str_replace_all(stringr::str_wrap(x, width = 36), "\\n", "<br>")),
+        \(x) stringr::str_replace_all(stringr::str_wrap(x, width = 42), "\\n", "<br>")),
       dplyr::across(
         dplyr::ends_with(c("from", "to")), 
         \(x) as.Date(x, format = "%d. %m. %Y")),
+      telefon = stringr::str_replace_all(telefon, ",\\s", "<br>"),
       mk_to = dplyr::if_else(is.na(mk_to) & mk_neomezena, "na dobu<br>neurčitou", as.character(mk_to)),
       av_to = dplyr::if_else(is.na(av_to) & av_neomezena, "na dobu<br>neurčitou", as.character(av_to)),
       link_map = paste0("<a href='", url, "detail?oao=", 
-                        amcr_id, "/'>", icon_map_link, "</a>")) %>% 
-    dplyr::select(link_map, nazev, amcr_id, ico, web, email, mk_to, av_to)
+                        amcr_id, "/'>", icon_map_link, "</a>"),
+      amcr = if_else(amcr, "&#x2714;", "&#10008;")) %>% 
+    dplyr::select(link_map, nazev, amcr_id, typ, web, email, telefon, mk_to, av_to, amcr)
 }
 
