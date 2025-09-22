@@ -30,6 +30,30 @@ oao_platne <- read_sf(here::here("app/data/oao_meta.geojson")) %>%
 # mapping amcr_id to nazev_zkraceny
 ident_cely <- setNames(oao_platne$amcr_id, oao_platne$nazev_zkraceny)
 
+
+# HOTFIX!!! ---------------------------------------------------------------
+# check names exist
+# unique(akce$organizace)[!unique(akce$organizace) %in% names(ident_cely)]
+akce <- akce %>% 
+  mutate(organizace = case_when(
+    organizace == "Archeologický ústav Praha" ~ "Archeologický ústav AV ČR, Praha",
+    str_detect(organizace, "NPÚ") ~ "NPÚ Generální ředitelství",
+    str_detect(organizace, "Archeologický ústav Brno") ~ "Archeologický ústav AV ČR, Brno",
+    organizace == "ARCHEO Sever" ~ "Archeo Sever",
+    .default = organizace
+  ))
+
+# unique(proj$organizace_prihlaseni)[!unique(proj$organizace_prihlaseni) %in% names(ident_cely)]
+proj <- proj %>% 
+  mutate(organizace_prihlaseni = case_when(
+    organizace_prihlaseni == "Archeologický ústav Praha" ~ "Archeologický ústav AV ČR, Praha",
+    str_detect(organizace_prihlaseni, "NPÚ") ~ "NPÚ Generální ředitelství",
+    str_detect(organizace_prihlaseni, "Archeologický ústav Brno") ~ "Archeologický ústav AV ČR, Brno",
+    organizace_prihlaseni == "ARCHEO Sever" ~ "Archeo Sever",
+    .default = organizace_prihlaseni
+  ))
+
+
 # data prep ---------------------------------------------------------------
 
 # map names to ico

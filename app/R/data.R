@@ -68,7 +68,7 @@ oao_meta <- function(dsn, client_url) {
                                             "'>", icon_ext_link, " ", ror, "</a>")),
       amcr_id = if_else(is.na(amcr_id), "–", amcr_id),
       api = if_else(is.na(amcr_id), "–", paste0("<a target=_blank href='", url_api,
-                                                amcr_id, "'> ", icon_ext_link, " AMČR OAI-PMH API</a>")),
+                                                amcr_id, "'> ", icon_ext_link, " OAI-PMH API</a>")),
       da = if_else(is.na(amcr_id), "–", paste0("<a target=_blank href='", url_da,
                                                amcr_id, ":or'> ", icon_ext_link, " Projekty</a>, ",
                                                "<a target=_blank href='", url_da_akce,

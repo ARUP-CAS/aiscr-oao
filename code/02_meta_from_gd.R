@@ -18,7 +18,7 @@ gd_url <- "https://docs.google.com/spreadsheets/d/1knxDiUuCVqwgzgQkodhGg0vMe6w6L
 oao_gd <- read_sheet(gd_url, sheet = "oao_webapp") %>% 
   filter(app) %>% 
   select(
-    amcr_id, app, web, 
+    amcr_id, label, app, web, 
     starts_with("mk"), starts_with("av"), amcr, 
     starts_with("is"), kraj, okres, katastr, note, spec_text
   )
@@ -132,7 +132,7 @@ oao_out <- oao %>%
     # proper dates
     across(ends_with(c("from", "to")), \(x) lubridate::ymd(x))
   ) %>% 
-  select(amcr_id, ror, ico, nazev_zkraceny, nazev, spec_text, 
+  select(amcr_id, label, ror, ico, nazev_zkraceny, nazev, spec_text, 
          adresa, adresa2, web, email, telefon, typ,
          zverejneni, pristupnost,
          starts_with(c("mk_", "av_")), amcr, note, uzemi)

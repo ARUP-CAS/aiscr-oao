@@ -67,7 +67,7 @@ oao_rep <- oao_scope %>%
   sf::st_drop_geometry()
 
 oao_names_tab <- oao_meta %>% 
-  dplyr::select(amcr_id, nazev) %>% 
+  dplyr::select(amcr_id, nazev = label) %>% 
   dplyr::arrange(nazev, .locale = "cs")
 
 oao_names_vec <- oao_names_tab$nazev %>% 
@@ -458,7 +458,7 @@ details_server <- function(input, output, session) {
         text = HTML(paste0(
           "<h3>", nazev, "</h3>",
           detail_table, 
-          "<h4>Detaily</h4>",
+          "<h4>Detaily oprávnění</h4>",
           "<p>", opravneni, " ", amcr_note, " ", amcr_zverejneni, "</p>",
           if (!is.na(note)) {
             paste0("<p>", note, "</p>")

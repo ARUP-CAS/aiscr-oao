@@ -15,7 +15,7 @@ dt_create <- function(data) {
       rownames = FALSE,
       colnames = c(
         " " = "link_map",
-        "Organizace" = "nazev",
+        "Organizace" = "label",
         "AMČR ID" = "amcr_id",
         "Typ organizace" = "typ",
         # "IČO" = "ico",
@@ -52,8 +52,8 @@ dt_data_prep <- function(data, url) {
     dplyr::mutate(
       # adresa = str_replace(adresa, ", ", "<br>"),
       dplyr::across(
-        c("nazev"),
-        \(x) stringr::str_replace_all(stringr::str_wrap(x, width = 42), "\\n", "<br>")),
+        c("label"),
+        \(x) stringr::str_replace_all(stringr::str_wrap(x, width = 32), "\\n", "<br>")),
       dplyr::across(
         dplyr::ends_with(c("from", "to")), 
         \(x) as.Date(x, format = "%d. %m. %Y")),
@@ -63,6 +63,6 @@ dt_data_prep <- function(data, url) {
       link_map = paste0("<a href='", url, "detail?oao=", 
                         amcr_id, "/'>", icon_map_link, "</a>"),
       amcr = if_else(amcr, "&#x2714;", "&#10008;")) %>% 
-    dplyr::select(link_map, nazev, amcr_id, typ, web, email, telefon, mk_to, av_to, amcr)
+    dplyr::select(link_map, label, amcr_id, typ, web, email, telefon, mk_to, av_to, amcr)
 }
 
