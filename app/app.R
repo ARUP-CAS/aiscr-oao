@@ -25,7 +25,7 @@ sleep <- 0.4
 
 # change when data/app is updated
 
-datestamp <<- "2025-09-19"
+datestamp <<- "2025-09-22"
 appversion <<- "3.0.0"
 
 url_da <<- "https://digiarchiv.aiscr.cz/results?entity=projekt&f_organizace="
