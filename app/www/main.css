@@ -1,3 +1,4 @@
+/*
 @font-face {
     font-family: 'museo300';
     src: url('museo300-regular-webfont.woff2') format('woff2');
@@ -10,6 +11,14 @@
     src: url('museo500-regular-webfont.woff2') format('woff2');
     font-weight: normal;
     font-style: normal;
+}
+*/
+
+/* --- FONTS --- */
+
+* {  
+  font-family: "Fira Sans"; 
+  /* font-size: medium; */
 }
 
 .container-fluid {
@@ -28,7 +37,6 @@
 
 .navbar-nav {
   padding: 15px 0px;
-  font-variant: small-caps;
   letter-spacing: 0.6px;
 }
 
@@ -39,8 +47,10 @@
 }
 
 .navbar-brand {
-  margin-bottom: 0px;
-  font-family: 'museo300', monospace;
+  margin-bottom: 0;
+  font-family: "Alegreya Sans SC", sans-serif;
+  font-weight: 500;
+  font-style: normal;
 }
 
 .navbar-header {
@@ -64,10 +74,31 @@ code {
   background-color: #f3f1f7; 
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1, h2 {
   color: #303641;
-  font-family: 'museo500', monospace;
+  font-family: "Alegreya Sans SC", sans-serif;
+  font-weight: 700;
+  font-style: normal;
 }
+
+h3, h4, h5, h6 {
+  color: #303641;
+  font-family: "Alegreya Sans SC", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+}
+
+/* ---- TABLE ---- */
+/* table {
+  margin: auto; 
+  border-top: 1px solid #666;
+  border-bottom: 1px solid #666;
+} */
+/* table thead th { border-bottom: 1px solid #ddd; } */
+th, td { padding: 5px; }
+thead, tfoot,  { background: #eee; } /* tr:nth-child(even) */
+
+
 
 /*
 .js-irs-0 .irs-single, .js-irs-0 .irs-bar-edge, .js-irs-0 .irs-bar {

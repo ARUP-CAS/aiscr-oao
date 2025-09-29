@@ -44,4 +44,4 @@ The **repo** contains:
 
 ## Licenses
 
-Code is released under [MIT License](LICENSE), data, texts, figures etc. under [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/) license.
+Code is released under [MIT License](LICENSE), data, texts, figures etc. under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) license.

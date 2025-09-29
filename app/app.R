@@ -25,13 +25,16 @@ sleep <- 0.4
 
 # change when data/app is updated
 
-datestamp <<- "2025-04-04"
-appversion <<- "2.1.0"
+datestamp <<- "2025-09-29"
+appversion <<- "3.0.0"
 
-url_da <- "https://digiarchiv.aiscr.cz/results?entity=projekt&f_organizace="
+url_da <<- "https://digiarchiv.aiscr.cz/results?entity=projekt&f_organizace="
+url_da_akce <<- "https://digiarchiv.aiscr.cz/results?entity=akce&f_organizace="
+url_da_nalezy <<- "https://digiarchiv.aiscr.cz/results?entity=samostatny_nalez&f_organizace="
+url_da_dokumenty <<- "https://digiarchiv.aiscr.cz/results?entity=dokument&f_organizace="
 url_da_coords <- "https://digiarchiv.aiscr.cz/results?mapa=true&loc_rpt="
-url_ror <- "https://ror.org/"
-url_api <- "https://api.aiscr.cz/2.1/oai?verb=GetRecord&metadataPrefix=oai_amcr&identifier=https://api.aiscr.cz/id/"
+url_ror <<- "https://ror.org/"
+url_api <<- "https://api.aiscr.cz/2.2/oai?verb=GetRecord&metadataPrefix=oai_amcr&identifier=https://api.aiscr.cz/id/"
 
 icon_link <- icon("fas fa-link")
 icon_ext_link <<- icon("fas fa-external-link-alt")
@@ -44,7 +47,7 @@ icon_mail <<- icon("far fa-envelope")
 select_oao <- function(inputId, label, multiple = FALSE) {
   selectInput(inputId, label, 
               choices = c(Vyberte = "", 
-                          setNames(oao_names_tab$ico, 
+                          setNames(oao_names_tab$amcr_id, 
                                    oao_names_tab$nazev)),
               selectize = TRUE, multiple = multiple, width = "100%")
 }
@@ -64,11 +67,11 @@ oao_rep <- oao_scope %>%
   sf::st_drop_geometry()
 
 oao_names_tab <- oao_meta %>% 
-  dplyr::select(ico, nazev) %>% 
+  dplyr::select(amcr_id, nazev = label) %>% 
   dplyr::arrange(nazev, .locale = "cs")
 
 oao_names_vec <- oao_names_tab$nazev %>% 
-  setNames(oao_names_tab$ico)
+  setNames(oao_names_tab$amcr_id)
 
 
 # mapclick page -----------------------------------------------------------
@@ -254,9 +257,9 @@ mapclick_server <- function(input, output, session) {
   output$tab_rep <- renderTable({
     if (!is.null(values$sf)) {
       oao_rep %>% 
-        dplyr::mutate(name = oao_names_vec[ico],
+        dplyr::mutate(name = oao_names_vec[amcr_id],
                       link = paste0("<a href='", client_url(), 
-                                    "detail?oao=", ico, "/'>", 
+                                    "detail?oao=", amcr_id, "/'>", 
                                     icon_map_link, "</a>")) %>% 
         dplyr::select(Detail = link, Organizace = name)
     }
@@ -329,7 +332,7 @@ details_page <- div(
         column(
           4, checkboxInput("grid", "Zobrazit akce", value = TRUE)),
         column(
-          4, checkboxInput("addr", "Zobrazit adresu", value = FALSE))),
+          4, checkboxInput("addr", "Zobrazit sídlo", value = FALSE))),
       tags$hr(),
       uiOutput("detail"),
       uiOutput("link"),
@@ -435,7 +438,7 @@ details_server <- function(input, output, session) {
       oao_scope_flt() %>% 
         sf_tempfile(file, layer = "OAO Polygon")
       oao_meta_flt() %>% 
-        dplyr::select(ico, nazev_zkraceny, nazev, adresa, 
+        dplyr::select(amcr_id, nazev_zkraceny, nazev, adresa, 
                       app = web_app, web = web0, email = mail0, 
                       starts_with("mk"), starts_with("av"), note) %>% 
         sf_tempfile(file, layer = "OAO Metadata")
@@ -447,33 +450,16 @@ details_server <- function(input, output, session) {
   output$detail <- renderText({
     req(input$oao)
     if (!is.na(oao_meta_flt()$spec_text)) {
-      includeHTML(paste0("text/", oao_meta_flt()$spec_text, ".html"))
+      includeHTML(paste0("text/oao-", oao_meta_flt()$spec_text, ".html"))
     } else {
+      detail_table <- oao_meta_flt() %>% 
+        detail_table()
       oao_meta_flt() %>% dplyr::transmute(
         text = HTML(paste0(
           "<h3>", nazev, "</h3>",
-          "<ul>",
-          "<li>", "<b>Web:</b> ", web, "</li>",
-          "<li>", "<b>Email:</b> ", mail, "</li>",
-          "<li>", "<b>Adresa:</b> ", adresa, "</li>",
-          "<li>", "<b>IČO:</b> ", ico, "</li>",
-          "<li>", "<b>ROR:</b> ", 
-          if_else(is.na(ror),
-                  "–",
-                  paste0("<a target=_blank href='", url_ror, ror,
-                         "'>", icon_ext_link, " ", ror, "</a><br>")), "</li>",
-          "<li>", "<b>AMČR:</b> ", 
-          if_else(is.na(amcr_id),
-                  "–<br>",
-                  paste0(amcr_id,
-                         "<ul><li>Záznam v <a target=_blank href='", url_api,
-                         amcr_id, "'> ", icon_ext_link, " AMČR API</a></li>",
-                         "<li>Projekty v <a target=_blank href='", url_da,
-                         amcr_id, ":or'> ", icon_ext_link, 
-                         " Digitálním archivu AMČR</a></li></ul>")), "</li>",
-          "</ul>",
+          detail_table, 
           "<h4>Detaily oprávnění</h4>",
-          "<p>", opravneni, "</p>",
+          "<p>", opravneni, " ", amcr_note, " ", amcr_zverejneni, "</p>",
           if (!is.na(note)) {
             paste0("<p>", note, "</p>")
           },
@@ -488,7 +474,7 @@ details_server <- function(input, output, session) {
     req(input$oao)
     HTML(paste0(
       "Zvolená organizace: <a href=", client_url(), "detail?oao=", input$oao, ">", 
-      icon_link, " <b>", oao_names_tab[oao_names_tab$ico == input$oao, ]$nazev, 
+      icon_link, " <b>", oao_names_tab[oao_names_tab$amcr_id == input$oao, ]$nazev, 
       "</b></a><br>"))
   })
   
@@ -499,10 +485,14 @@ details_server <- function(input, output, session) {
         icon("far fa-save"), " <b>Stáhnout data</b>"))),
       HTML(paste0(
         " (formát <i>.gpkg</i>, podléhá licenci ",
-        "<a href=https://creativecommons.org/licenses/by-nc/4.0/>", 
+        # "<a href=https://creativecommons.org/licenses/by-nc/4.0/>", 
+        "<a href=https://creativecommons.org/licenses/by/4.0/>", 
         icon("fab fa-creative-commons"), 
         icon("fab fa-creative-commons-by"),
-        icon("fab fa-creative-commons-nc"), " CC BY-NC 4.0</a>)")))
+        # icon("fab fa-creative-commons-nc"), 
+        # " CC BY-NC 4.0</a>)"
+        " CC BY 4.0</a>)"
+        )))
   })
   
   # map
@@ -563,11 +553,20 @@ about_page <- div(
     column(3, includeMarkdown("text/about_left.md")),
     column(4, includeMarkdown("text/about_center.md"),
            tagList(
-             tags$h3("Aktualizace"),
+             tags$h4("Cookies"),
+             "Aplikace používá pouze analytické cookies pro sledování návštěvnosti 
+             stránek. Návštěvnost služeb provozovaných infrastrukturou AIS CR 
+             je důležitým údajem vykazování využití AIS CR komunitou. V souladu 
+             s platnou legislativou prosíme o potvrzení souhlasu s využíváním 
+             analytických cookies.             ",
+             actionLink("reset_consent", "Resetovat cookies"),
+             tags$h4("Aktualizace"),
              "Poslední aktualizace dat proběhla ",
              tags$b(format.Date(
                as.Date(datestamp), "%-d. %-m. %Y"), .noWS = "after"),
-             ". Verze ", tags$b(appversion, .noWS = "after"), ".")),
+             ". Verze ", tags$b(appversion, .noWS = "after"), "."
+             ),
+           ),
     column(4, includeMarkdown("text/about_right.md"))),
   fluidRow(
     column(12, includeMarkdown("text/about_footer.md"))))
@@ -589,7 +588,7 @@ menubar <- tags$nav(
       class = "navbar-header",
       tags$a(
         class = "navbar-brand", href = "#!/",
-        icon("fas fa-map-marked-alt"), "Mapa archeologických organizací")),
+        icon("fas fa-map-marked-alt"), "Mapa oprávněných archeologických organizací")),
     tags$ul(
       class = "nav navbar-nav",
       tags$li(
@@ -602,7 +601,7 @@ menubar <- tags$nav(
         a(href = route_link("list"),
           icon("fas fa-bars"), "Seznam organizací")),
       tags$li(
-        a(href = "https://archeologickamapa.cz/oznameni",
+        a(href = "https://amcr.aiscr.cz/oznameni/",
           target = "_blank",
           icon_ext_link, "Oznámit stavební záměr")),
       tags$li(
@@ -641,13 +640,28 @@ menubar <- tags$nav(
 ui <- fluidPage(
   title = "Mapa OAO",
   theme = "main.css",
-  tags$head(includeHTML("google-analytics.html")),
+  
+  tags$head(
+    # CookieConsent
+    tags$link(rel = "stylesheet",
+              href = "https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.1/cookieconsent.min.css"),
+    tags$link(rel = "preconnect", 
+              href = "https://fonts.googleapis.com"),
+    tags$link(rel = "preconnect",
+              href = "https://fonts.gstatic.com"),
+    tags$link(rel = "stylesheet",
+              href = "https://fonts.googleapis.com/css2?family=Alegreya+Sans+SC:wght@400;500;700&family=Fira+Sans:wght@400;500;700&display=swap"),
+    tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.1/cookieconsent.min.js"),
+    tags$script(src = "cookie-consent.js")
+  ),
+  
   menubar,
   router_ui(
     route("/", mapclick_page),
     route("detail", details_page),
     route("list", list_page),
-    route("about", about_page)))
+    route("about", about_page)),
+)
 
 
 # server ------------------------------------------------------------------
@@ -664,14 +678,27 @@ server <- function(input, output, session) {
            client$url_port, client$url_pathname, "#!/")
   })
   
+  # Handle both accept and deny consent
+  observeEvent(input$analytics_consent, {
+    if (isTRUE(input$analytics_consent)) {
+      session$sendCustomMessage('load-ua', list())  
+    } else if (isFALSE(input$analytics_consent)) {
+      session$sendCustomMessage('remove-ua', list())
+    }
+  }, ignoreInit = TRUE)
+  
+  # Reset button - use the new reset handler
+  observeEvent(input$reset_consent, {
+    session$sendCustomMessage('reset-consent', list())
+  })
+  
   mapclick_server(input, output, session)
   
   details_server(input, output, session)
   
   list_server(input, output, session)
   
-  # greeter ----
-  
+  # greeter
   greeter <- modalDialog(
     title = "Organizace s oprávněním provádět archeologický výzkum",
     easyClose = TRUE, 

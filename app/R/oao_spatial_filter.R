@@ -5,10 +5,10 @@ oao_filter_poly <- function(data, click, rep, oao_names, url) {
   sf::st_drop_geometry(data)[poly_pred %>% lengths() > 0, ] %>% 
     dplyr::arrange(area) %>% 
     # removes whole republic oao
-    dplyr::filter(!ico %in% rep$ico) %>%
-    dplyr::mutate(name = oao_names[ico],
+    dplyr::filter(!amcr_id %in% rep$amcr_id) %>%
+    dplyr::mutate(name = oao_names[amcr_id],
                   link = paste0("<a href='", url, 
-                                "detail?oao=", ico, "/'>", 
+                                "detail?oao=", amcr_id, "/'>", 
                                 icon_map_link, "</a>")) %>% 
     dplyr::select(Detail = link, Organizace = name)
 }
@@ -21,12 +21,12 @@ oao_filter_grid <- function(data, click, buffer, oao_names, url) {
   )
   
   sf::st_drop_geometry(data)[grid_pred %>% lengths() > 0, ] %>%
-    dplyr::group_by(ico) %>%
+    dplyr::group_by(amcr_id) %>%
     dplyr::summarize(value = sum(value)) %>%
     dplyr::arrange(dplyr::desc(value)) %>%
-    dplyr::mutate(name = oao_names[ico],
+    dplyr::mutate(name = oao_names[amcr_id],
                   link = paste0("<a href='", url, 
-                                "detail?oao=", ico, "/'>", 
+                                "detail?oao=", amcr_id, "/'>", 
                                 icon_map_link, "</a>")) %>% 
     dplyr::select(Detail = link, Organizace = name)
 }

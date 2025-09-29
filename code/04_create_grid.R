@@ -19,21 +19,40 @@ proj <- read_csv(here::here("data/processed", "pian_proj.csv"))
 # heslar
 # heslar <- read_csv(here::here("data/raw", "heslar_organizace.csv"))
 
-# GD data
-revised_gd_url <- "https://docs.google.com/spreadsheets/d/1knxDiUuCVqwgzgQkodhGg0vMe6w6LsKiGVqrsvi5dpw/edit#gid=0"
-
 # oao s platnou dohodou
-oao_platne <- googlesheets4::read_sheet(revised_gd_url, sheet = "oao_webapp") %>%
-  filter(app) %>%
-  pull(ico)
+oao_platne <- read_sf(here::here("app/data/oao_meta.geojson")) %>% 
+  select(amcr_id, nazev_zkraceny) %>% 
+  st_drop_geometry()
 
 # updated_gd_url <- "https://docs.google.com/spreadsheets/d/1RXXRGpgkrgtBhF9taEtCVuHxVIJcbeATF9RBxBtORJY/edit?usp=sharing"
 # gd_updated <- drive_get(updated_gd_url)
 
-# mapping ico to heslar amcr
-ico_mapping <- googlesheets4::read_sheet(revised_gd_url, sheet = "oao_heslar_amcr") %>% 
-  filter(ico %in% oao_platne)
-ico <- setNames(ico_mapping$ico, ico_mapping$amcr_nazev_zkraceny)
+# mapping amcr_id to nazev_zkraceny
+ident_cely <- setNames(oao_platne$amcr_id, oao_platne$nazev_zkraceny)
+
+
+# HOTFIX!!! ---------------------------------------------------------------
+# check names exist
+# unique(akce$organizace)[!unique(akce$organizace) %in% names(ident_cely)]
+akce <- akce %>% 
+  mutate(organizace = case_when(
+    organizace == "Archeologický ústav Praha" ~ "Archeologický ústav AV ČR, Praha",
+    str_detect(organizace, "NPÚ") ~ "NPÚ Generální ředitelství",
+    str_detect(organizace, "Archeologický ústav Brno") ~ "Archeologický ústav AV ČR, Brno",
+    organizace == "ARCHEO Sever" ~ "Archeo Sever",
+    .default = organizace
+  ))
+
+# unique(proj$organizace_prihlaseni)[!unique(proj$organizace_prihlaseni) %in% names(ident_cely)]
+proj <- proj %>% 
+  mutate(organizace_prihlaseni = case_when(
+    organizace_prihlaseni == "Archeologický ústav Praha" ~ "Archeologický ústav AV ČR, Praha",
+    str_detect(organizace_prihlaseni, "NPÚ") ~ "NPÚ Generální ředitelství",
+    str_detect(organizace_prihlaseni, "Archeologický ústav Brno") ~ "Archeologický ústav AV ČR, Brno",
+    organizace_prihlaseni == "ARCHEO Sever" ~ "Archeo Sever",
+    .default = organizace_prihlaseni
+  ))
+
 
 # data prep ---------------------------------------------------------------
 
@@ -50,7 +69,7 @@ akce_clean <- akce %>%
          x = centroid_e,
          y = centroid_n) %>% 
   mutate(
-    ico = unname(ico[nazev_zkraceny])
+    amcr_id = unname(ident_cely[nazev_zkraceny])
     # nazev_zkraceny = if_else(str_detect(nazev_zkraceny, "MU Brno"), 
     #                          "MU Brno", nazev_zkraceny),
     # nazev_zkraceny = if_else(str_detect(nazev_zkraceny, "NPÚ"), 
@@ -58,7 +77,7 @@ akce_clean <- akce %>%
     # nazev_zkraceny = if_else(str_detect(nazev_zkraceny, "Archeologický ústav Brno"), 
     #                          "Archeologický ústav Brno", nazev_zkraceny)
   ) %>% 
-  filter(!is.na(ico)) %>% 
+  filter(!is.na(amcr_id)) %>% 
   select(-nazev_zkraceny)
 
 proj_clean <- proj %>% 
@@ -73,18 +92,18 @@ proj_clean <- proj %>%
          # pian,
          x = geometry_e,
          y = geometry_n) %>% 
-  mutate(ico = unname(ico[nazev_zkraceny])) %>% 
-  filter(!is.na(ico)) %>% 
+  mutate(amcr_id = unname(ident_cely[nazev_zkraceny])) %>% 
+  filter(!is.na(amcr_id)) %>% 
   select(-nazev_zkraceny)
 
 pian_clean <- akce_clean %>% bind_rows(proj_clean)
 
 # check if all oao present
-pian_clean$ico %in% ico %>% all()
+pian_clean$amcr_id %in% ident_cely %>% all()
 # pian_clean$ico[!pian_clean$ico %in% ico]
 
 # oao without NO information in amcr
-ico_mapping$label[!ico %in% pian_clean$ico] %>% as_tibble()
+oao_platne$nazev_zkraceny[!oao_platne$amcr_id %in% pian_clean$amcr_id] %>% as_tibble()
 
 # sf ----------------------------------------------------------------------
 
@@ -96,15 +115,15 @@ pian_sf <- pian_clean %>%
 
 # remove pian outside polygon --------------------
 
-ico_seq <- ico %>% factor() %>% levels()
+id_seq <- ident_cely %>% factor() %>% levels()
 
-res <- vector("list", length(ico_seq)) %>% setNames(ico_seq)
+res <- vector("list", length(id_seq)) %>% setNames(id_seq)
 
-for (i in seq_along(ico_seq)) {
+for (i in seq_along(id_seq)) {
   poly_i <- poly %>% 
-    filter(ico == ico_seq[i])
+    filter(amcr_id == id_seq[i])
   pian_i <- pian_sf %>% 
-    filter(ico == ico_seq[i])
+    filter(amcr_id == id_seq[i])
   
   res[[i]] <- pian_i[as.vector(st_contains(poly_i, pian_i, sparse = FALSE)), ]
 }
@@ -119,7 +138,7 @@ pian_valid <- res %>% bind_rows()
 #   filter(!fuu) %>% View()
 
 pian_nest <- pian_valid %>% 
-  group_by(ico) %>% 
+  group_by(amcr_id) %>% 
   nest()
 
 # create grid -------------------------------------------------------------
