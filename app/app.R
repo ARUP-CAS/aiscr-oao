@@ -25,7 +25,7 @@ sleep <- 0.4
 
 # change when data/app is updated
 
-datestamp <<- "2025-09-22"
+datestamp <<- "2025-09-29"
 appversion <<- "3.0.0"
 
 url_da <<- "https://digiarchiv.aiscr.cz/results?entity=projekt&f_organizace="
@@ -601,7 +601,7 @@ menubar <- tags$nav(
         a(href = route_link("list"),
           icon("fas fa-bars"), "Seznam organizací")),
       tags$li(
-        a(href = "https://archeologickamapa.cz/oznameni",
+        a(href = "https://amcr.aiscr.cz/oznameni/",
           target = "_blank",
           icon_ext_link, "Oznámit stavební záměr")),
       tags$li(
