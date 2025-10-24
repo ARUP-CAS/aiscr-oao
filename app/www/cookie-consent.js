@@ -1,14 +1,14 @@
 /*=====================================================================
-  cookie-consent.js  (Fixed Universal Analytics version)
+  cookie-consent.js  (GA4 version)
   ---------------------------------------------------------------
   • Shows a CookieConsent banner with Accept / Deny buttons
   • Stores consent state and handles both accept/deny cases
   • Sends the consent state back to Shiny (analytics_consent input)
-  • Provides Shiny custom message handlers for UA management
+  • Provides Shiny custom message handlers for GA4 management
 =====================================================================*/
 
 (function () {
-  /*-------------------------------------------------------------
+ /*-------------------------------------------------------------
     1 Initialize CookieConsent banner
   -------------------------------------------------------------*/
   window.addEventListener('load', function () {
@@ -19,17 +19,17 @@
 
     window.cookieconsent.initialise({
       palette: {
-        popup:   { background: '#303641' },  //#303641
-        button:  { background: '#b8de29' },  // accept button
-        highlight: { background: '#b4b4b4' } // deny button
+        popup:   { background: '#303641' },
+        button:  { background: '#b8de29' },
+        highlight: { background: '#b4b4b4' }
       },
-      type: 'opt-in',  // This enables the deny button
+      type: 'opt-in',
       theme: 'classic',
       position: 'bottom',
       content: {
         message: 'Používáme pouze analytické cookies pro sledování návštěvnosti stránek.',
-        allow: 'Přijmout',     // Accept button text
-        deny: 'Odmítnout',     // Deny button text
+        allow: 'Přijmout',
+        deny: 'Odmítnout',
         link: 'Více...',
         href: '/#!/about',
         target: '_self'
@@ -76,48 +76,47 @@
   });
 
   /*-------------------------------------------------------------
-    2 Shiny custom message handlers (UA version)
+    2 Shiny custom message handlers (GA4 version)
   -------------------------------------------------------------*/
 
-  /* ---------- LOAD UNIVERSAL ANALYTICS (analytics.js) ---------- */
+  /* ---------- LOAD GA4 (gtag.js) ---------- */
   Shiny.addCustomMessageHandler('load-ua', function (msg) {
     // Prevent duplicate injection
-    if (document.getElementById('ua-script')) return;
+    if (document.getElementById('ga4-script')) return;
 
-    console.log('Loading Universal Analytics...');
+    console.log('Loading GA4...');
     
-    // Insert the analytics.js script
+    // Insert the gtag.js script
     var s = document.createElement('script');
     s.async = true;
-    s.src = 'https://www.google-analytics.com/analytics.js';
-    s.id = 'ua-script';
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=G-TMY15YFFH8';
+    s.id = 'ga4-script';
     document.head.appendChild(s);
 
-    // Initialize UA after the script loads
+    // Initialize GA4 after the script loads
     s.onload = function () {
-      var uaId = 'UA-79200582-7';  // Your actual UA property ID
-
-      if (typeof ga === 'function') {
-        ga('create', uaId, 'auto');
-        ga('send', 'pageview');
-        console.log('Universal Analytics initialized');
-      } else {
-        console.warn('Universal Analytics (ga) not available after script load.');
-      }
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-TMY15YFFH8');
+      console.log('GA4 initialized with G-TMY15YFFH8');
     };
   });
 
-  /* ---------- REMOVE UA SCRIPT ---------- */
+  /* ---------- REMOVE GA4 SCRIPT ---------- */
   Shiny.addCustomMessageHandler('remove-ua', function (msg) {
-    console.log('Removing Universal Analytics...');
-    var uaTag = document.getElementById('ua-script');
-    if (uaTag) {
-      uaTag.parentNode.removeChild(uaTag);
+    console.log('Removing GA4...');
+    var ga4Tag = document.getElementById('ga4-script');
+    if (ga4Tag) {
+      ga4Tag.parentNode.removeChild(ga4Tag);
     }
     
-    // Clear any GA queued commands
-    if (window.ga) {
-      window.ga = undefined;
+    // Clear GA4 dataLayer and gtag function
+    if (window.dataLayer) {
+      window.dataLayer = [];
+    }
+    if (window.gtag) {
+      window.gtag = undefined;
     }
   });
 
@@ -147,15 +146,18 @@
     document.cookie = 'analytics_consent=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; SameSite=Lax';
     document.cookie = 'cookieconsent_status=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
     
-    // Remove UA script
-    var uaTag = document.getElementById('ua-script');
-    if (uaTag) {
-      uaTag.parentNode.removeChild(uaTag);
+    // Remove GA4 script
+    var ga4Tag = document.getElementById('ga4-script');
+    if (ga4Tag) {
+      ga4Tag.parentNode.removeChild(ga4Tag);
     }
     
-    // Clear GA
-    if (window.ga) {
-      window.ga = undefined;
+    // Clear GA4
+    if (window.dataLayer) {
+      window.dataLayer = [];
+    }
+    if (window.gtag) {
+      window.gtag = undefined;
     }
     
     // Clear Shiny input
