@@ -65,12 +65,20 @@ oao_meta <- function(dsn, client_url) {
           ),
           paste0(mk_id, ". Dohoda s AV ČR ", datum_av, ".")
         ),
-        "Oprávnění v plném rozsahu dle zákona o státní památkové péči."
+        "Oprávnění k provádění archeologických výzkumů na základě přímého zmocnění podle <a href='https://www.zakonyprolidi.cz/cs/1987-20#p21' target=_blank>§ 21 odst. 1 Zákona č. 20/1987, o státní památkové péči</a>."
       ),
       amcr_note = dplyr::if_else(
-        amcr,
-        "Organizace <b>má uzavřenou</b> dohodu o užívání AMČR.",
-        "Organizace <b>neuzavřela</b> dohodu o užívání AMČR."
+        !nazev_zkraceny %in%
+          c(
+            "Archeologický ústav AV ČR, Brno",
+            "Archeologický ústav AV ČR, Praha"
+          ),
+        dplyr::if_else(
+          amcr,
+          "Organizace <b>má uzavřenou</b> dohodu o užívání AMČR.",
+          "Organizace <b>neuzavřela</b> dohodu o užívání AMČR."
+        ),
+        ""
       ),
       amcr_zverejneni = paste0(
         "Po <b>",
@@ -310,19 +318,9 @@ detail_table <- function(data) {
   #   knitr::kable(col.names = c(), format = "html", escape = FALSE)
 }
 
-# Download updated version of CSV here https://sbirkapp.gov.cz/vyhledavani/vysledek?hlavni_typ=pp&ovm=&nazev=&number=&oblast=archeologicke-nalezy&vydano_od=&vydano_do=&zverejneno_od=&zverejneno_do=&ucinnost_od=&ucinnost_do=&platnost=
+# Download updated version of CSV here https://sbirkapp.gov.cz/vyhledavani/vysledek?hlavni_typ=pp&oblast=archeologicke-nalezy
 kraje_data <- function(data) {
   read.csv(data) |>
-    dplyr::select(
-      kraj = "Kraj.publikujícího",
-      id = "Číslo.právního.předpisu",
-      druh = "Druh.právního.předpisu",
-      nazev = "Název.právního.předpisu",
-      date_published = "Datum.vydání",
-      date = "Datum.nabytí.účinnosti",
-      url = "URL.záznamu",
-      narizeni = "Platný.právní.předpis"
-    ) |>
     dplyr::transmute(
       kraj,
       id,
@@ -339,7 +337,16 @@ kraje_data <- function(data) {
       ),
       narizeni = dplyr::if_else(as.logical(narizeni), "&#x2714;", "&#10008;"),
       date_published,
-      date
+      date,
+      email = paste0(
+        "<a href='mailto:",
+        email,
+        "'>",
+        icon_mail,
+        " ",
+        email,
+        "</a>"
+      )
     )
 }
 
@@ -354,6 +361,7 @@ kraje_dt <- function(x) {
         "Název nařízení" = "name",
         "Datum vyhlášení" = "date_published",
         "Datum nabytí účinnosti" = "date",
+        "Email" = "email",
         "Platné nařízení" = "narizeni"
       ),
       options = list(

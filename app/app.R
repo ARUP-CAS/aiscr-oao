@@ -24,8 +24,8 @@ sleep <- 0.4
 
 # change when data/app is updated
 
-datestamp <<- "2025-09-29"
-appversion <<- "3.0.0"
+datestamp <<- "2026-01-05"
+appversion <<- "3.1.0"
 
 url_da <<- "https://digiarchiv.aiscr.cz/results?entity=projekt&f_organizace="
 url_da_akce <<- "https://digiarchiv.aiscr.cz/results?entity=akce&f_organizace="
@@ -78,7 +78,7 @@ oao_names_tab <- oao_meta %>%
 oao_names_vec <- oao_names_tab$nazev %>%
   setNames(oao_names_tab$amcr_id)
 
-kraje_input <- kraje_data("data/narizeni_kraje.csv")
+kraje_input <- kraje_data("data/narizeni-kraje.csv")
 
 
 # mapclick page -----------------------------------------------------------
