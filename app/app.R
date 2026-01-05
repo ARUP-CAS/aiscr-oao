@@ -24,8 +24,8 @@ sleep <- 0.4
 
 # change when data/app is updated
 
-datestamp <<- "2025-09-29"
-appversion <<- "3.0.0"
+datestamp <<- "2026-01-05"
+appversion <<- "3.1.0"
 
 url_da <<- "https://digiarchiv.aiscr.cz/results?entity=projekt&f_organizace="
 url_da_akce <<- "https://digiarchiv.aiscr.cz/results?entity=akce&f_organizace="
@@ -77,6 +77,8 @@ oao_names_tab <- oao_meta %>%
 
 oao_names_vec <- oao_names_tab$nazev %>%
   setNames(oao_names_tab$amcr_id)
+
+kraje_input <- kraje_data("data/narizeni-kraje.csv")
 
 
 # mapclick page -----------------------------------------------------------
@@ -710,6 +712,26 @@ list_server <- function(input, output, session) {
 }
 
 
+# kraje page --------------------------------------------------------------
+
+kraje_page <- div(
+  fluidRow(
+    column(3, includeMarkdown("text/kraje_left.md")),
+    column(
+      9,
+      includeMarkdown("text/kraje_right.md"),
+      DT::dataTableOutput("kraje_table"),
+    )
+  )
+)
+
+kraje_server <- function(input, output, session) {
+  output$kraje_table <- DT::renderDataTable({
+    kraje_input |>
+      kraje_dt()
+  })
+}
+
 # about page --------------------------------------------------------------
 
 # about ui
@@ -783,6 +805,13 @@ menubar <- tags$nav(
       ),
       tags$li(
         a(
+          href = route_link("kraje"),
+          icon("fas fa-drafting-compass"),
+          "Přehled krajů"
+        )
+      ),
+      tags$li(
+        a(
           href = "https://amcr.aiscr.cz/oznameni/",
           target = "_blank",
           icon_ext_link,
@@ -824,6 +853,9 @@ menubar <- tags$nav(
       ),
       tags$li(
         a(href = route_link("list"), icon("fas fa-bars"), "Seznam")
+      ),
+      tags$li(
+        a(href = route_link("kraje"), icon("fas fa-drafting-compass"), "Kraje")
       ),
       tags$li(
         a(href = route_link("about"), icon("fas fa-info-circle"), "Aplikace")
@@ -868,6 +900,7 @@ ui <- fluidPage(
     route("/", mapclick_page),
     route("detail", details_page),
     route("list", list_page),
+    route("kraje", kraje_page),
     route("about", about_page)
   ),
 )
@@ -915,6 +948,8 @@ server <- function(input, output, session) {
   details_server(input, output, session)
 
   list_server(input, output, session)
+
+  kraje_server(input, output, session)
 
   # greeter
   greeter <- modalDialog(
