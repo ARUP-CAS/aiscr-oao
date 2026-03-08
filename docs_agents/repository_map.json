@@ -1,0 +1,62 @@
+{
+  "_meta": {
+    "schema_version": "1",
+    "generated_by": "bootstrap",
+    "last_updated": null,
+    "task_id": "T01",
+    "note": "Inicializační skeleton. Agent musí při T01 doplnit skutečné hodnoty analýzou zdrojového kódu."
+  },
+  "repository": {
+    "name": "aiscr-oao",
+    "url": "https://github.com/ARUP-CAS/aiscr-oao",
+    "upstream": "https://github.com/petrpajdla/map_oao",
+    "type": "shiny-application",
+    "deployed_at": "https://oao.aiscr.cz/",
+    "version": "v3.1.0",
+    "branch": "main"
+  },
+  "root_directories": {
+    "app": {
+      "purpose": "Zdrojový kód Shiny aplikace",
+      "arup_cas_owned": "částečně — rozšíření oproti upstream"
+    },
+    "code": {
+      "purpose": "R skripty pro přípravu a aktualizaci geoprostorových dat",
+      "arup_cas_owned": "částečně — viz fork_delta.json"
+    },
+    "emailer": {
+      "purpose": "Komponenta pro odesílání oznámení krajům o archeologických výzkumech (2025 novela zákona)",
+      "arup_cas_owned": "plně — není v upstream"
+    },
+    "plots": {
+      "purpose": "Grafy a vizualizace dat OAO",
+      "arup_cas_owned": "plně — není v upstream"
+    },
+    ".github": {
+      "purpose": "GitHub Actions workflows pro CI/CD a deployment",
+      "arup_cas_owned": "plně — není v upstream"
+    }
+  },
+  "app_structure": {
+    "entry_points": [],
+    "modules_dir": "app/R",
+    "data_dir": {
+      "path": "app/data",
+      "note": "Generovaná geoprostorová data — nemodifikovat ručně, aktualizovat přes code/"
+    },
+    "static_assets": "app/www",
+    "content_files": "app/text",
+    "known_modules": []
+  },
+  "key_files": {
+    "map_oao.Rproj": "RStudio project file",
+    "CITATION.cff": "Citační metadata (ARUP-CAS přidání)",
+    "renv.lock": "Zámek R závislostí — ověřit existenci",
+    ".gitignore": "Ignorované soubory"
+  },
+  "fork_scope": {
+    "fully_arup_cas": ["emailer/", "plots/", ".github/", "CITATION.cff", "README_en.md", "docs_agents/"],
+    "shared_with_upstream": ["app/", "code/", "emailer/", ".gitignore", "LICENSE", "README.md", "map_oao.Rproj"],
+    "note": "Přesný rozsah změn ARUP-CAS oproti upstream — viz docs_agents/fork_delta.json (T08)"
+  }
+}

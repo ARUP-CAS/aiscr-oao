@@ -1,0 +1,53 @@
+{
+  "schema_version": "2",
+  "last_updated": null,
+  "tasks": {
+    "T01": {
+      "status": "pending",
+      "completed_at": null,
+      "report_path": null
+    },
+    "T02": {
+      "status": "pending",
+      "completed_at": null,
+      "report_path": null
+    },
+    "T03": {
+      "status": "pending",
+      "completed_at": null,
+      "report_path": null
+    },
+    "T04": {
+      "status": "pending",
+      "completed_at": null,
+      "report_path": null
+    },
+    "T05": {
+      "status": "pending",
+      "completed_at": null,
+      "report_path": null
+    },
+    "T06": {
+      "status": "pending",
+      "completed_at": null,
+      "report_path": null
+    },
+    "T07": {
+      "status": "pending",
+      "completed_at": null,
+      "report_path": null
+    },
+    "T08": {
+      "status": "pending",
+      "completed_at": null,
+      "report_path": null
+    },
+    "T09": {
+      "status": "pending",
+      "completed_at": null,
+      "report_path": null,
+      "requires": ["T01", "T02", "T03", "T04", "T05", "T06", "T07", "T08"]
+    }
+  },
+  "file_hashes": {}
+}

@@ -1,0 +1,57 @@
+{
+  "_meta": {
+    "schema_version": "1",
+    "generated_by": "bootstrap",
+    "last_updated": null,
+    "task_id": "T02",
+    "note": "Inicializační skeleton. Agent musí při T02 doplnit skutečné závislosti analýzou kódu."
+  },
+  "r_packages": {
+    "app": {
+      "confirmed": [],
+      "inferred": [
+        "shiny",
+        "leaflet",
+        "sf",
+        "dplyr"
+      ],
+      "note": "Doplnit z library() volání nebo DESCRIPTION / renv.lock"
+    },
+    "code": {
+      "confirmed": [],
+      "inferred": [],
+      "note": "Doplnit z library() volání ve skriptech v code/"
+    },
+    "emailer": {
+      "confirmed": [],
+      "inferred": [],
+      "note": "Doplnit — emailer byl přidán ARUP-CAS, závislosti neznámé"
+    }
+  },
+  "dependency_management": {
+    "tool": null,
+    "lockfile_present": null,
+    "renv_lock_path": "renv.lock",
+    "note": "Ověřit: je přítomen soubor renv.lock?"
+  },
+  "external_data_sources": [
+    {
+      "name": "AMCR — Archeologická mapa ČR",
+      "url": "https://amcr-info.aiscr.cz/",
+      "type": "fieldwork data",
+      "update_mechanism": "manuální aktualizace přes code/ skripty"
+    },
+    {
+      "name": "MK ČR — seznam oprávněných organizací",
+      "url": "https://www.mkcr.cz/seznam-organizaci-opravnenych-k-provadeni-archeologickych-vyzkumu-278.html",
+      "type": "authorization registry",
+      "update_mechanism": "manuální aktualizace"
+    },
+    {
+      "name": "AV ČR — smlouvy s organizacemi",
+      "type": "contracts data",
+      "update_mechanism": "manuální aktualizace"
+    }
+  ],
+  "architectural_issues": []
+}

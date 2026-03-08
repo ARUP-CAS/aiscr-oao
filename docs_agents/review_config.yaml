@@ -1,0 +1,198 @@
+# review_config.yaml — AI review configuration for aiscr-oao
+#
+# R Shiny application presenting data on licensed archaeological organizations
+# in the Czech Republic. Fork of petrpajdla/map_oao.
+# Deployed at https://oao.aiscr.cz/
+
+repository:
+  name: aiscr-oao
+  url: https://github.com/ARUP-CAS/aiscr-oao
+  upstream: https://github.com/petrpajdla/map_oao
+  type: shiny-application
+  organisation: ARUP-CAS
+  primary_language: R
+  licence_code: MIT
+  licence_data: CC-BY-4.0
+  published_url: https://oao.aiscr.cz/
+  default_branch: main
+  development_branch: main  # single-branch workflow
+  version: v3.1.0
+
+stack:
+  runtime: R
+  framework: shiny
+  geospatial:
+    - sf
+    - leaflet
+  data_manipulation:
+    - dplyr
+    - tidyverse
+  visualisation:
+    - ggplot2
+  frontend:
+    - HTML
+    - JavaScript
+    - CSS
+  r_environment: renv  # verify if renv.lock is present
+
+  # Explicitly disabled (not applicable to this repository):
+  backend_api: false
+  database: false
+  docker: false
+  orm: false
+  celery: false
+  solr: false
+  xslt: false
+
+ci_cd:
+  provider: github-actions
+  workflows_path: .github/workflows/
+  deployment_target: shiny-server  # verify: Shiny Server or shinyapps.io
+
+task_size_limits:
+  max_files_per_task: 20
+  max_lines_per_task: 6000
+  max_lines_per_file: 2000
+  large_file_strategy: split_task
+  prefer_single_module_per_task: true
+
+cache_strategy:
+  hash_algorithm: sha256
+  hash_target: file_content
+  cache_format:
+    file_path: string
+    sha256: string
+    last_reviewed: iso8601
+    task_id: string
+
+important_directories:
+  - app
+  - app/R
+  - app/www
+  - app/text
+  - code
+  - emailer
+  - plots
+  - .github
+
+important_files:
+  - AGENTS.md
+  - CITATION.cff
+  - map_oao.Rproj
+  - renv.lock          # verify if present
+  - .Rprofile          # verify if present
+  - .gitignore
+
+ignored_directories:
+  - .git
+  - renv               # R package cache
+  - app/data           # generated data files — do not analyse
+  - .Rproj.user
+
+# Domain analyses — each explicitly enabled or disabled
+domain_analyses:
+  repository_map:
+    enabled: true
+    path: docs_agents/repository_map.json
+    task_id: T01
+
+  dependency_graph:
+    enabled: true
+    path: docs_agents/dependency_graph.json
+    task_id: T02
+
+  shiny_analysis:
+    enabled: true
+    path: docs_agents/shiny_analysis.json
+    task_id: T03
+    description: Shiny app structure, reactivity, UI/server separation
+
+  scripts_analysis:
+    enabled: true
+    path: docs_agents/scripts_analysis.json
+    task_id: T04
+    description: R data preparation scripts in code/
+
+  emailer_analysis:
+    enabled: true
+    path: docs_agents/emailer_analysis.json
+    task_id: T05
+    description: >
+      Emailer component for notifying regional authorities (kraje).
+      Security of SMTP credentials and secrets is high priority.
+
+  frontend_analysis:
+    enabled: true
+    path: docs_agents/frontend_analysis.json
+    task_id: T06
+    description: Custom HTML, JS, CSS in app/www/ and Shiny UI
+
+  cicd_analysis:
+    enabled: true
+    path: docs_agents/cicd_analysis.json
+    task_id: T07
+
+  fork_delta:
+    enabled: true
+    path: docs_agents/fork_delta.json
+    task_id: T08
+    description: >
+      Delta analysis between ARUP-CAS/aiscr-oao and upstream petrpajdla/map_oao.
+      Must be completed before making strong quality judgements about shared files.
+    upstream_repo: https://github.com/petrpajdla/map_oao
+    known_arup_additions:
+      - plots/
+      - .github/
+      - docs_agents/
+      - CITATION.cff
+      - README_en.md
+
+  security_analysis:
+    enabled: true
+    path: docs_agents/security_analysis.json
+    description: >
+      Primarily focused on emailer SMTP secrets and CI/CD secret management.
+      Static Shiny app has limited attack surface but data exposure should be checked.
+
+  # Disabled — not applicable to this repository
+  docker_analysis:
+    enabled: false
+    note: "R Shiny app — no Docker configuration detected"
+  orm_analysis:
+    enabled: false
+    note: "R Shiny app — no relational database or ORM"
+  solr_analysis:
+    enabled: false
+  xslt_analysis:
+    enabled: false
+  celery_analysis:
+    enabled: false
+
+prompt_evolution:
+  suggestions_path: docs_agents/prompt_evolution/
+  apply_manually: true
+  reviewer: human
+  note: >
+    Suggestions accumulate in prompt_evolution/ across sessions.
+    A human reviewer applies accepted suggestions to docs_agents/PROMPT.md
+    before starting a new audit cycle. Agents must not self-modify PROMPT.md.
+
+review:
+  focus_areas:
+    - shiny_reactivity
+    - emailer_security
+    - data_pipeline
+    - r_dependencies
+    - fork_delta
+    - frontend_assets
+    - cicd_health
+
+  exclusions:
+    - app/data/
+    - renv/
+    - .Rproj.user/
+
+  report_path: docs_agents/review_reports/
+  cache_path: docs_agents/review_cache.json
+  bugs_path: docs_agents/bugs.md
+  backlog_path: docs_agents/refactoring_backlog.md
