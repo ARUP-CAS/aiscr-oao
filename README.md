@@ -11,10 +11,6 @@ zobrazující data o organizacích oprávněných provádět archeologické výz
 
 Aplikace je dostupná na: **<https://oao.aiscr.cz/>**
 
-Repozitář je forkem projektu [petrpajdla/map_oao](https://github.com/petrpajdla/map_oao).
-ARUP-CAS repozitář rozšiřuje původní aplikaci o emailer komponentu, grafy (`plots/`),
-GitHub Actions workflows a další funkcionality.
-
 Aplikace je součástí infrastruktury
 [**Archeologického informačního systému ČR** (AIS CR)](https://www.aiscr.cz/).
 
@@ -22,14 +18,14 @@ Aplikace je součástí infrastruktury
 
 ## Obsah repozitáře
 
-```
+```markdown
 app/          — zdrojový kód Shiny aplikace
   data/       — zpracovaná geoprostorová data
   R/          — funkce využívané serverovou částí
   text/       — stránka O aplikaci a popisy organizací
   www/        — statické soubory (obrázky, CSS, JS)
 code/         — R skripty pro přípravu dat
-emailer/      — komponenta pro odesílání oznámení krajům
+emailer/      — pomocné skripty pro e-mailovou komunikaci
 plots/        — grafy a vizualizace dat
 .github/      — GitHub Actions workflows
 ```
@@ -44,7 +40,10 @@ Aplikace umožňuje:
 - zobrazení mapy působnosti organizací
 - přehled organizací v jednotlivých krajích
 - stažení dat ve formátu GeoPackage (CC BY 4.0)
-- plnění oznamovací povinnosti OAO vůči krajům (emailer)
+
+Informace o oznamovací povinnosti OAO vůči krajům a o oznamování přes AMČR
+jsou v aplikaci popsány — samotné odesílání oznámení zajišťuje systém
+[AMČR](https://amcr-info.aiscr.cz/), nikoli tato aplikace.
 
 ---
 
@@ -58,7 +57,7 @@ Aplikace umožňuje:
 
 ## Citace
 
-```
+```markdown
 Pajdla, P. 2023: Mapa oprávněných archeologických organizací
 [Map of Authorized Archaeological Organizations].
 DOI: 10.5281/zenodo.8178384.

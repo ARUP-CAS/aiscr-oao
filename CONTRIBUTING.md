@@ -30,7 +30,7 @@ git checkout -b <typ>/<popis>
 
 Aplikační změny:
 
-```
+```markdown
 feature/<popis>
 bugfix/<popis>
 docs/<popis>
@@ -40,13 +40,13 @@ chore/<popis>
 
 Větve agentů:
 
-```
+```markdown
 agents/<jmeno-agenta>/<popis>
 ```
 
 Příklady:
 
-```
+```markdown
 feature/add-kraj-filter
 bugfix/fix-map-popup
 docs/update-readme
@@ -68,7 +68,7 @@ Každý pull request musí:
 
 ### Šablona popisu PR
 
-```
+```markdown
 ## Popis změny
 <stručný popis>
 
@@ -90,7 +90,7 @@ Používejte **Draft PR** pro rozpracované změny.
 
 Formát:
 
-```
+```markdown
 <typ>: <stručný popis v češtině nebo angličtině>
 ```
 
@@ -106,7 +106,7 @@ Typy:
 
 Příklady:
 
-```
+```markdown
 feat: přidat filtr podle kraje
 fix: opravit zobrazení popup okna na mobilních zařízeních
 data: aktualizovat data OAO k 2026-02
@@ -119,13 +119,13 @@ chore: aktualizovat R závislosti
 
 Větve generované AI agenty musí dodržovat konvenci:
 
-```
+```markdown
 agents/<jmeno-agenta>/<popis>
 ```
 
 Příklady:
 
-```
+```markdown
 agents/claude/review-shiny-structure
 agents/claude/dependency-analysis
 ```
@@ -140,24 +140,9 @@ Veškerá práce AI agentů musí být zkontrolována člověkem před mergem.
 
 Výstupy AI review se ukládají do:
 
-```
+```markdown
 docs_agents/
 ```
-
----
-
-## Fork scope
-
-Tento repozitář je forkem [petrpajdla/map_oao](https://github.com/petrpajdla/map_oao).
-
-Změny se aplikují **pouze na kód přidaný nebo upravený ARUP-CAS**.
-
-Při přispívání je třeba rozlišovat:
-
-- **upstream kód** — kód z původního repozitáře petrpajdla/map_oao
-- **ARUP-CAS rozšíření** — přidané komponenty (`emailer/`, `plots/`, CI/CD), rozšíření aplikace
-
-Změny v upstream kódu by měly být v ideálním případě navrhovány i do upstream repozitáře.
 
 ---
 

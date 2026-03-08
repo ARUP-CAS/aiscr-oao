@@ -12,10 +12,6 @@ excavations in the Czech Republic.
 
 The application is deployed at: **<https://oao.aiscr.cz/>**
 
-This repository is a fork of [petrpajdla/map_oao](https://github.com/petrpajdla/map_oao).
-The ARUP-CAS fork extends the original application with an emailer component,
-plots (`plots/`), GitHub Actions workflows and additional functionality.
-
 The application is part of the
 [**Archaeological Information System of the Czech Republic** (AIS CR)](https://www.aiscr.cz/)
 infrastructure.
@@ -31,7 +27,7 @@ app/          — Shiny application source code
   text/       — About page and organization descriptions
   www/        — Static assets (images, CSS, JS)
 code/         — R scripts for data preparation
-emailer/      — Component for sending notifications to regional authorities
+emailer/      — Helper scripts for email communication
 plots/        — Charts and data visualisations
 .github/      — GitHub Actions workflows
 ```
@@ -46,7 +42,11 @@ The application allows users to:
 - display the sphere of activity of individual organizations on a map
 - view an overview of organizations by region (kraj)
 - download data in GeoPackage format (CC BY 4.0)
-- fulfil the statutory obligation of OAOs to notify regional authorities (emailer)
+
+The application describes the statutory obligation of OAOs to notify regional
+authorities (kraje) about archaeological excavations and explains how this is
+handled through the [AMCR](https://amcr-info.aiscr.cz/) system. The actual
+sending of notifications is performed by AMCR, not by this application.
 
 ---
 

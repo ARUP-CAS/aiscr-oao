@@ -9,7 +9,6 @@
   "repository": {
     "name": "aiscr-oao",
     "url": "https://github.com/ARUP-CAS/aiscr-oao",
-    "upstream": "https://github.com/petrpajdla/map_oao",
     "type": "shiny-application",
     "deployed_at": "https://oao.aiscr.cz/",
     "version": "v3.1.0",
@@ -17,24 +16,19 @@
   },
   "root_directories": {
     "app": {
-      "purpose": "Zdrojový kód Shiny aplikace",
-      "arup_cas_owned": "částečně — rozšíření oproti upstream"
+      "purpose": "Zdrojový kód Shiny aplikace"
     },
     "code": {
-      "purpose": "R skripty pro přípravu a aktualizaci geoprostorových dat",
-      "arup_cas_owned": "částečně — viz fork_delta.json"
+      "purpose": "R skripty pro přípravu a aktualizaci geoprostorových dat"
     },
     "emailer": {
-      "purpose": "Komponenta pro odesílání oznámení krajům o archeologických výzkumech (2025 novela zákona)",
-      "arup_cas_owned": "plně — není v upstream"
+      "purpose": "ZJISTIT V T05 — nečíst dokumentaci, přečíst zdrojový kód"
     },
     "plots": {
-      "purpose": "Grafy a vizualizace dat OAO",
-      "arup_cas_owned": "plně — není v upstream"
+      "purpose": "Grafy a vizualizace dat OAO"
     },
     ".github": {
-      "purpose": "GitHub Actions workflows pro CI/CD a deployment",
-      "arup_cas_owned": "plně — není v upstream"
+      "purpose": "GitHub Actions workflows pro CI/CD a deployment"
     }
   },
   "app_structure": {
@@ -50,13 +44,8 @@
   },
   "key_files": {
     "map_oao.Rproj": "RStudio project file",
-    "CITATION.cff": "Citační metadata (ARUP-CAS přidání)",
+    "CITATION.cff": "Citační metadata",
     "renv.lock": "Zámek R závislostí — ověřit existenci",
     ".gitignore": "Ignorované soubory"
-  },
-  "fork_scope": {
-    "fully_arup_cas": ["emailer/", "plots/", ".github/", "CITATION.cff", "README_en.md", "docs_agents/"],
-    "shared_with_upstream": ["app/", "code/", "emailer/", ".gitignore", "LICENSE", "README.md", "map_oao.Rproj"],
-    "note": "Přesný rozsah změn ARUP-CAS oproti upstream — viz docs_agents/fork_delta.json (T08)"
   }
 }

@@ -14,8 +14,7 @@ A nested `AGENTS.md` in a subdirectory takes precedence for that subtree.
 **Type:** R Shiny application  
 **Published at:** https://oao.aiscr.cz/  
 **Version:** v3.1.0 (January 2026)  
-**Licence:** MIT (code), CC BY 4.0 (data, texts, figures)  
-**Upstream fork:** https://github.com/petrpajdla/map_oao
+**Licence:** MIT (code), CC BY 4.0 (data, texts, figures)
 
 This repository contains the **Mapa OAO** application — an interactive map
 of organizations licensed to conduct archaeological excavations in the Czech Republic.
@@ -27,15 +26,10 @@ Key components:
 
 - Shiny application (`app/`) — interactive map and data views
 - Data preparation scripts (`code/`) — R scripts producing processed geospatial data
-- Emailer component (`emailer/`) — notifications to regional authorities (kraje)
-  about archaeological excavations, required by the 2025 amendment to the
-  Monument Protection Act
+- Emailer component (`emailer/`) — purpose and mechanism to be confirmed by reading the
+  source code; see T05 in `docs_agents/PROMPT.md`
 - Plots and visualisations (`plots/`)
 - GitHub Actions CI/CD (`.github/`)
-
-**Fork scope note:** This repository is a fork of `petrpajdla/map_oao`.
-AI agents must apply the review framework **only to code added or modified by ARUP-CAS**.
-The fork scope is defined explicitly in the Scope section below.
 
 ---
 
@@ -89,15 +83,15 @@ Examples include:
 
 Agent work must be committed to branches named:
 
-```
+```markdown
 agents/<agent_name>/<topic>
 ```
 
 Examples:
 
-```
+```markdown
 agents/claude/review-shiny-structure
-agents/claude/fork-delta-analysis
+agents/claude/emailer-analysis
 ```
 
 Rules:
@@ -157,8 +151,7 @@ When verifying behaviour or documentation, use the following sources in order of
 
 1. Live application at https://oao.aiscr.cz/
 2. Source code in this repository
-3. Technical documentation
-4. Repository documentation
+3. Repository documentation
 
 Related live systems:
 
@@ -167,7 +160,7 @@ Related live systems:
 | Mapa OAO | https://oao.aiscr.cz/ | Live application |
 | AMCR info site | https://amcr-info.aiscr.cz/ | Terminology, OAO data context |
 | AIS CR main site | https://www.aiscr.cz/ | System context |
-| AMCR | https://amcr.aiscr.cz/ | Source of fieldwork data |
+| AMCR | https://amcr.aiscr.cz/ | Source of fieldwork data used by the app |
 
 ---
 
@@ -175,54 +168,26 @@ Related live systems:
 
 ### In Scope
 
-Agents may modify:
-
-**ARUP-CAS additions and extensions (primary scope):**
+Agents may review and modify all source code in this repository:
 
 - `app/` — Shiny application code and static assets
 - `code/` — R scripts for data preparation
-- `emailer/` — emailer component (fully ARUP-CAS owned)
-- `plots/` — plots and visualisations (fully ARUP-CAS owned)
-- `.github/` — CI/CD workflows (fully ARUP-CAS owned)
+- `emailer/` — emailer component (read code first before drawing any conclusions
+  about its purpose; do not assume its function without inspecting the source)
+- `plots/` — plots and visualisations
+- `.github/` — CI/CD workflows
 - `docs_agents/` — AI review artefacts
 - `CITATION.cff`, `README.md`, `README_en.md`, `CONTRIBUTING.md`
-
-**Shared with upstream (secondary scope — conservative changes only):**
-
-- `app/R/` — server functions (may contain ARUP-CAS extensions)
-- `app/text/` — content files
-- `app/www/` — static assets
 
 ### Out of Scope
 
 Agents must not modify:
 
 - `app/data/` — processed geospatial data (updated via `code/` scripts, not manually)
-- upstream code that has not been modified by ARUP-CAS
 
 Generated artefacts must not be modified:
 
 - any output files produced by `code/` scripts
-
-### Fork Scope Boundary
-
-This repository is a fork of `petrpajdla/map_oao` (upstream).
-
-ARUP-CAS additions (fully in scope):
-
-- `emailer/` — new component, not present in upstream
-- `plots/` — new directory, not present in upstream
-- `.github/` — CI/CD infrastructure, not present in upstream
-- CITATION.cff, README_en.md — new files added by ARUP-CAS
-- Any feature added after the fork was created (see `git log` delta vs upstream)
-
-Upstream code (in scope only for conservative improvements):
-
-- `app/` core structure (ui.R, server.R, global.R or equivalent)
-- `code/` data preparation scripts
-
-Changes to shared upstream code should ideally be proposed to the upstream
-repository as well.
 
 ---
 
@@ -245,7 +210,7 @@ Technologies detected in this repository:
 - `leaflet` — interactive maps
 - `sf` — geospatial data processing
 - `dplyr` / `tidyverse` — data manipulation
-- `ggplot2` — static visualisations (plots/)
+- `ggplot2` — static visualisations (`plots/`)
 
 ### Infrastructure
 
@@ -270,7 +235,7 @@ This repository uses a **single-branch workflow**.
 
 Development workflow:
 
-```
+```markdown
 feature / bugfix / agents branches → main
 ```
 
@@ -283,7 +248,7 @@ Rules:
 
 Branch naming:
 
-```
+```markdown
 feature/<topic>
 bugfix/<topic>
 docs/<topic>
@@ -317,13 +282,11 @@ contains the initialization sequence, task registry and execution procedure.
 
 `shiny_analysis.json` — Shiny application structure and reactivity analysis.
 
-`emailer_analysis.json` — emailer component analysis.
+`emailer_analysis.json` — emailer component analysis (purpose determined during T05).
 
 `frontend_analysis.json` — custom HTML, JS and CSS analysis.
 
 `cicd_analysis.json` — GitHub Actions workflow analysis.
-
-`fork_delta.json` — analysis of ARUP-CAS changes relative to upstream petrpajdla/map_oao.
 
 For execution procedures, refer to `docs_agents/PROMPT.md`.
 
@@ -335,11 +298,7 @@ This repository is part of the **AIS CR infrastructure** maintained by **ARUP-CA
 
 Related repositories:
 
-- `aiscr-webamcr` — AMCR main application (source of fieldwork data used in Mapa OAO)
+- `aiscr-webamcr` — AMCR main application (source of fieldwork data displayed in Mapa OAO)
 - `aiscr-digiarchiv-2` — Digital Archive AMCR
 - `aiscr-webamcr-help` — AMCR user documentation
 - `aiscr-api-home` — AMCR API documentation
-
-Upstream repository:
-
-- `petrpajdla/map_oao` — original author's repository (upstream of this fork)

@@ -1,13 +1,11 @@
 # review_config.yaml — AI review configuration for aiscr-oao
 #
 # R Shiny application presenting data on licensed archaeological organizations
-# in the Czech Republic. Fork of petrpajdla/map_oao.
-# Deployed at https://oao.aiscr.cz/
+# in the Czech Republic. Deployed at https://oao.aiscr.cz/
 
 repository:
   name: aiscr-oao
   url: https://github.com/ARUP-CAS/aiscr-oao
-  upstream: https://github.com/petrpajdla/map_oao
   type: shiny-application
   organisation: ARUP-CAS
   primary_language: R
@@ -118,8 +116,9 @@ domain_analyses:
     path: docs_agents/emailer_analysis.json
     task_id: T05
     description: >
-      Emailer component for notifying regional authorities (kraje).
-      Security of SMTP credentials and secrets is high priority.
+      Emailer component — purpose to be determined by reading source code in emailer/.
+      Do NOT assume it handles kraj-notifications; that is AMCR functionality (aiscr-webamcr).
+      Read the code first, then evaluate quality, security and configuration.
 
   frontend_analysis:
     enabled: true
@@ -132,27 +131,12 @@ domain_analyses:
     path: docs_agents/cicd_analysis.json
     task_id: T07
 
-  fork_delta:
-    enabled: true
-    path: docs_agents/fork_delta.json
-    task_id: T08
-    description: >
-      Delta analysis between ARUP-CAS/aiscr-oao and upstream petrpajdla/map_oao.
-      Must be completed before making strong quality judgements about shared files.
-    upstream_repo: https://github.com/petrpajdla/map_oao
-    known_arup_additions:
-      - plots/
-      - .github/
-      - docs_agents/
-      - CITATION.cff
-      - README_en.md
-
   security_analysis:
     enabled: true
     path: docs_agents/security_analysis.json
     description: >
-      Primarily focused on emailer SMTP secrets and CI/CD secret management.
-      Static Shiny app has limited attack surface but data exposure should be checked.
+      Focused on emailer configuration and data exposure.
+      Static Shiny app has limited attack surface but secrets in emailer/ should be checked.
 
   # Disabled — not applicable to this repository
   docker_analysis:
@@ -180,10 +164,9 @@ prompt_evolution:
 review:
   focus_areas:
     - shiny_reactivity
-    - emailer_security
+    - emailer_functionality
     - data_pipeline
     - r_dependencies
-    - fork_delta
     - frontend_assets
     - cicd_health
 
