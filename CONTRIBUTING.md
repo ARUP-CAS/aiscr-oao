@@ -141,7 +141,7 @@ Veškerá práce AI agentů musí být zkontrolována člověkem před mergem.
 Výstupy AI review se ukládají do:
 
 ```markdown
-docs_agents/
+.agents/
 ```
 
 ---

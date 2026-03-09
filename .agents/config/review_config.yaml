@@ -91,29 +91,29 @@ ignored_directories:
 domain_analyses:
   repository_map:
     enabled: true
-    path: docs_agents/repository_map.json
+    path: .agents/analysis/repository_map.json
     task_id: T01
 
   dependency_graph:
     enabled: true
-    path: docs_agents/dependency_graph.json
+    path: .agents/analysis/dependency_graph.json
     task_id: T02
 
   shiny_analysis:
     enabled: true
-    path: docs_agents/shiny_analysis.json
+    path: .agents/analysis/shiny_analysis.json
     task_id: T03
     description: Shiny app structure, reactivity, UI/server separation
 
   scripts_analysis:
     enabled: true
-    path: docs_agents/scripts_analysis.json
+    path: .agents/analysis/scripts_analysis.json
     task_id: T04
     description: R data preparation scripts in code/
 
   emailer_analysis:
     enabled: true
-    path: docs_agents/emailer_analysis.json
+    path: .agents/analysis/emailer_analysis.json
     task_id: T05
     description: >
       Emailer component — purpose to be determined by reading source code in emailer/.
@@ -122,18 +122,18 @@ domain_analyses:
 
   frontend_analysis:
     enabled: true
-    path: docs_agents/frontend_analysis.json
+    path: .agents/analysis/frontend_analysis.json
     task_id: T06
     description: Custom HTML, JS, CSS in app/www/ and Shiny UI
 
   cicd_analysis:
     enabled: true
-    path: docs_agents/cicd_analysis.json
+    path: .agents/analysis/cicd_analysis.json
     task_id: T07
 
   security_analysis:
     enabled: true
-    path: docs_agents/security_analysis.json
+    path: .agents/analysis/security_analysis.json
     description: >
       Focused on emailer configuration and data exposure.
       Static Shiny app has limited attack surface but secrets in emailer/ should be checked.
@@ -153,13 +153,13 @@ domain_analyses:
     enabled: false
 
 prompt_evolution:
-  suggestions_path: docs_agents/prompt_evolution/
+  suggestions_path: .agents/prompts/prompt_evolution/
   apply_manually: true
   reviewer: human
   note: >
     Suggestions accumulate in prompt_evolution/ across sessions.
-    A human reviewer applies accepted suggestions to docs_agents/PROMPT.md
-    before starting a new audit cycle. Agents must not self-modify PROMPT.md.
+    A human reviewer applies accepted suggestions to .agents/prompts/review_codebase.md
+    before starting a new audit cycle. Agents must not self-modify review_codebase.md.
 
 review:
   focus_areas:
@@ -175,7 +175,7 @@ review:
     - renv/
     - .Rproj.user/
 
-  report_path: docs_agents/review_reports/
-  cache_path: docs_agents/review_cache.json
-  bugs_path: docs_agents/bugs.md
-  backlog_path: docs_agents/refactoring_backlog.md
+  report_path: .agents/reports/review_reports/
+  cache_path: .agents/config/review_cache.json
+  bugs_path: .agents/reports/bugs.md
+  backlog_path: .agents/reports/refactoring_backlog.md
