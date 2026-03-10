@@ -22,4 +22,4 @@ plots/ @petrpajdla
 .github/ @petrpajdla
 
 # AI review artefakty — vyžadují lidský review před mergem
-docs_agents/ @petrpajdla
+/.agents/ @motyc

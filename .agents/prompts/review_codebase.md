@@ -44,8 +44,8 @@ Files excluded from analysis in every task:
 At the start of every agent session, execute in this exact order:
 
 1. Read `AGENTS.md` — contains repository-specific agent instructions that take precedence.
-2. Read `docs_agents/review_config.yaml` — load configuration.
-3. Read `docs_agents/review_cache.json` — load progress state.
+2. Read `.agents/config/review_config.yaml` — load configuration.
+3. Read `.agents/config/review_cache.json` — load progress state.
 4. Compute SHA-256 hashes of all source files listed in the cache.
 5. Detect changed files by comparing hashes; mark affected tasks as pending.
 6. Select the next pending task from the task registry (see TASK REGISTRY below).
@@ -59,27 +59,33 @@ At the start of every agent session, execute in this exact order:
 Create and maintain:
 
 ```plain
-docs_agents/
-  bugs.md
-  cicd_analysis.json
-  dependency_graph.json
-  emailer_analysis.json
-  frontend_analysis.json
-  PROMPT.md
-  prompt_evolution/README.md
-  review_reports/README.md
-  refactoring_backlog.md
-  repository_map.json
-  review_cache.json
-  review_config.yaml
-  shiny_analysis.json
+.agents/
+  prompts/
+    review_codebase.md
+    prompt_evolution/
+      README.md
+  config/
+    review_config.yaml
+    review_cache.json
+  analysis/
+    repository_map.json
+    dependency_graph.json
+    shiny_analysis.json
+    emailer_analysis.json
+    frontend_analysis.json
+    cicd_analysis.json
+  reports/
+    bugs.md
+    refactoring_backlog.md
+    review_reports/
+      README.md
 ```
 
 ---
 
 ## CONFIGURATION FILE
 
-Create and maintain: `docs_agents/review_config.yaml`
+Create and maintain: `.agents/config/review_config.yaml`
 
 ```yaml
 repository: aiscr-oao
@@ -127,34 +133,34 @@ ignored_directories:
   - .Rproj.user
 
 prompt_evolution:
-  suggestions_path: docs_agents/prompt_evolution/
+  suggestions_path: .agents/prompts/prompt_evolution/
   apply_manually: true
   reviewer: human
 
 domain_analyses:
   shiny_analysis:
     enabled: true
-    path: docs_agents/shiny_analysis.json
+    path: .agents/analysis/shiny_analysis.json
 
   dependency_graph:
     enabled: true
-    path: docs_agents/dependency_graph.json
+    path: .agents/analysis/dependency_graph.json
 
   emailer_analysis:
     enabled: true
-    path: docs_agents/emailer_analysis.json
+    path: .agents/analysis/emailer_analysis.json
     description: >
       Emailer component — purpose to be determined by reading source code.
       Do not assume it handles kraj-notifications; that is AMCR functionality.
 
   frontend_analysis:
     enabled: true
-    path: docs_agents/frontend_analysis.json
+    path: .agents/analysis/frontend_analysis.json
     description: Custom HTML, JS, CSS in app/www/ and Shiny UI
 
   cicd_analysis:
     enabled: true
-    path: docs_agents/cicd_analysis.json
+    path: .agents/analysis/cicd_analysis.json
 
   # Disabled — not applicable to this repository
   docker_analysis:
@@ -171,7 +177,7 @@ domain_analyses:
     enabled: false
   security_analysis:
     enabled: true
-    path: docs_agents/security_analysis.json
+    path: .agents/analysis/security_analysis.json
     note: "Focus: emailer configuration and data exposure"
 ```
 
@@ -184,25 +190,25 @@ tasks:
   - id: T01
     name: repository_map
     description: Mapování struktury repozitáře
-    target_file: docs_agents/repository_map.json
+    target_file: .agents/analysis/repository_map.json
     priority: 1
 
   - id: T02
     name: dependency_graph
     description: Graf R závislostí a externích datových zdrojů
-    target_file: docs_agents/dependency_graph.json
+    target_file: .agents/analysis/dependency_graph.json
     priority: 2
 
   - id: T03
     name: shiny_analysis
     description: Analýza Shiny aplikace — struktura, reaktivita, UI/server separace
-    target_file: docs_agents/shiny_analysis.json
+    target_file: .agents/analysis/shiny_analysis.json
     priority: 3
 
   - id: T04
     name: data_pipeline_analysis
     description: Analýza skriptů pro přípravu dat v code/
-    target_file: docs_agents/scripts_analysis.json
+    target_file: .agents/analysis/scripts_analysis.json
     priority: 4
 
   - id: T05
@@ -211,25 +217,25 @@ tasks:
       Analýza emailer komponenty — nejprve zjisti, co skutečně dělá,
       teprve pak hodnoť kvalitu, bezpečnost a konfiguraci.
       NEPOUŽÍVEJ předpoklady o funkcionalitě před přečtením kódu.
-    target_file: docs_agents/emailer_analysis.json
+    target_file: .agents/analysis/emailer_analysis.json
     priority: 5
 
   - id: T06
     name: frontend_analysis
     description: Analýza vlastního HTML/JS/CSS kódu v app/www/ a Shiny UI
-    target_file: docs_agents/frontend_analysis.json
+    target_file: .agents/analysis/frontend_analysis.json
     priority: 6
 
   - id: T07
     name: cicd_analysis
     description: Analýza GitHub Actions workflows
-    target_file: docs_agents/cicd_analysis.json
+    target_file: .agents/analysis/cicd_analysis.json
     priority: 7
 
   - id: T08
     name: final_audit
     description: Finální souhrnný audit všech zjištění
-    target_file: docs_agents/review_reports/final_audit.md
+    target_file: .agents/reports/review_reports/final_audit.md
     priority: 8
     requires: [T01, T02, T03, T04, T05, T06, T07]
 ```
@@ -238,7 +244,7 @@ tasks:
 
 ## REPOSITORY MAP (T01)
 
-Create: `docs_agents/repository_map.json`
+Create: `.agents/analysis/repository_map.json`
 
 **Purpose:** Provide a structural index of the repository.
 
@@ -272,7 +278,7 @@ Include:
 
 ## DEPENDENCY GRAPH (T02)
 
-Create: `docs_agents/dependency_graph.json`
+Create: `.agents/analysis/dependency_graph.json`
 
 **Purpose:** Map R package dependencies and external data dependencies.
 
@@ -309,7 +315,7 @@ Detect:
 
 ## SHINY APP ANALYSIS (T03)
 
-Create: `docs_agents/shiny_analysis.json`
+Create: `.agents/analysis/shiny_analysis.json`
 
 **Purpose:** Analyse the Shiny application structure, reactivity and code quality.
 
@@ -362,7 +368,7 @@ Detect:
 
 ## DATA PIPELINE ANALYSIS (T04)
 
-Create: `docs_agents/scripts_analysis.json`
+Create: `.agents/analysis/scripts_analysis.json`
 
 **Purpose:** Analyse R scripts in `code/` that prepare geospatial data for the app.
 
@@ -387,7 +393,7 @@ Detect:
 
 ## EMAILER ANALYSIS (T05)
 
-Create: `docs_agents/emailer_analysis.json`
+Create: `.agents/analysis/emailer_analysis.json`
 
 **Purpose:** Determine what the emailer component actually does, then evaluate its quality.
 
@@ -440,7 +446,7 @@ Severity mapping for secrets:
 
 ## FRONTEND ANALYSIS (T06)
 
-Create: `docs_agents/frontend_analysis.json`
+Create: `.agents/analysis/frontend_analysis.json`
 
 **Purpose:** Analyse custom HTML, JavaScript and CSS in the application.
 
@@ -481,7 +487,7 @@ Detect:
 
 ## CI/CD ANALYSIS (T07)
 
-Create: `docs_agents/cicd_analysis.json`
+Create: `.agents/analysis/cicd_analysis.json`
 
 **Purpose:** Analyse GitHub Actions workflows.
 
@@ -519,7 +525,7 @@ Detect:
 
 ## REVIEW CACHE
 
-Create and maintain: `docs_agents/review_cache.json`
+Create and maintain: `.agents/config/review_cache.json`
 
 ```json
 {
@@ -548,7 +554,7 @@ Create and maintain: `docs_agents/review_cache.json`
 
 ## BUG TRACKING
 
-Create and maintain: `docs_agents/bugs.md`
+Create and maintain: `.agents/reports/bugs.md`
 
 Before adding a bug entry:
 
@@ -581,7 +587,7 @@ When a bug of severity `Kritická` is found:
 
    ```markdown
    ⚠️  KRITICKÁ CHYBA — BUG-XXX: <stručný popis>
-   Viz docs_agents/bugs.md. Před dalším taskem doporučeno lidské review.
+   Viz .agents/reports/bugs.md. Před dalším taskem doporučeno lidské review.
    ```
 
 3. Do not start the next task in the same session until the finding is recorded
@@ -591,7 +597,7 @@ When a bug of severity `Kritická` is found:
 
 ## REFACTORING BACKLOG
 
-Create and maintain: `docs_agents/refactoring_backlog.md`
+Create and maintain: `.agents/reports/refactoring_backlog.md`
 
 ```markdown
 # Refactoring backlog — aiscr-oao
@@ -610,7 +616,7 @@ Create and maintain: `docs_agents/refactoring_backlog.md`
 
 ## REPORT OUTPUT
 
-Each completed task must produce: `docs_agents/review_reports/<task_id>.md`
+Each completed task must produce: `.agents/reports/review_reports/<task_id>.md`
 
 The report must be written in Czech and include:
 
@@ -651,17 +657,17 @@ At the end of each task report, include a section:
 - Jaké soubory nebo adresáře by stálo za to přidat
 ```
 
-Save to: `docs_agents/prompt_evolution/<task_id>_prompt_update.md`
+Save to: `.agents/prompts/prompt_evolution/<task_id>_prompt_update.md`
 
 Suggestions accumulate across sessions. A human reviewer applies accepted
-suggestions to `docs_agents/PROMPT.md` before starting a new audit cycle.
-Agents must not self-modify `PROMPT.md`.
+suggestions to `.agents/prompts/review_codebase.md` before starting a new audit cycle.
+Agents must not self-modify `review_codebase.md`.
 
 ---
 
 ## FINAL AUDIT (T08)
 
-When all tasks T01–T07 are completed, create: `docs_agents/review_reports/final_audit.md`
+When all tasks T01–T07 are completed, create: `.agents/reports/review_reports/final_audit.md`
 
 ```markdown
 # Finální audit — Mapa OAO (aiscr-oao)

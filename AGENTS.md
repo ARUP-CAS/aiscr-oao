@@ -27,7 +27,7 @@ Key components:
 - Shiny application (`app/`) — interactive map and data views
 - Data preparation scripts (`code/`) — R scripts producing processed geospatial data
 - Emailer component (`emailer/`) — purpose and mechanism to be confirmed by reading the
-  source code; see T05 in `docs_agents/PROMPT.md`
+  source code; see T05 in `.agents/prompts/review_codebase.md`
 - Plots and visualisations (`plots/`)
 - GitHub Actions CI/CD (`.github/`)
 
@@ -39,18 +39,18 @@ Before starting any work, agents must gather repository context.
 
 Always read the following files first:
 
-- `docs_agents/repository_map.json`
-- `docs_agents/review_cache.json`
-- `docs_agents/bugs.md`
-- `docs_agents/refactoring_backlog.md`
-- `docs_agents/PROMPT.md`
+- `.agents/analysis/repository_map.json`
+- `.agents/config/review_cache.json`
+- `.agents/reports/bugs.md`
+- `.agents/reports/refactoring_backlog.md`
+- `.agents/prompts/review_codebase.md`
 
 These files contain context accumulated across previous review sessions.
 Reading them prevents duplicated work and ensures continuity.
 
 ### Resolving Inconsistencies
 
-If content in `docs_agents/` contradicts high-level repository rules or governance
+If content in `.agents/` contradicts high-level repository rules or governance
 defined in this document (`AGENTS.md`), `CONTRIBUTING.md`, or other authoritative
 project documentation, agents must treat those higher-level documents as the
 **source of truth**.
@@ -61,7 +61,7 @@ In such cases agents should:
    - `AGENTS.md`
    - `CONTRIBUTING.md`
    - repository coding standards
-2. Adapt or update affected files in `docs_agents/` to align with those rules.
+2. Adapt or update affected files in `.agents/` to align with those rules.
 3. Record the adjustment in the review history (for example `review_cache.json`
    or `refactoring_backlog.md`) when relevant.
 
@@ -72,7 +72,7 @@ current repository governance.
 
 ## AI-Generated Content
 
-All artefacts produced by AI agents belong in the `docs_agents/` directory.
+All artefacts produced by AI agents belong in the `.agents/` directory.
 
 Examples include:
 
@@ -125,7 +125,7 @@ Agents must:
 - gather repository context before starting work
 - avoid repeating previously recorded work
 - prefer incremental improvements
-- record findings in `docs_agents/`
+- record findings in `.agents/`
 - keep changes minimal and well scoped
 - follow existing R coding conventions
 - suggest improvements to `AGENTS.md` when appropriate
@@ -176,7 +176,7 @@ Agents may review and modify all source code in this repository:
   about its purpose; do not assume its function without inspecting the source)
 - `plots/` — plots and visualisations
 - `.github/` — CI/CD workflows
-- `docs_agents/` — AI review artefacts
+- `.agents/` — AI review artefacts
 - `CITATION.cff`, `README.md`, `README_en.md`, `CONTRIBUTING.md`
 
 ### Out of Scope
@@ -257,28 +257,37 @@ chore/<topic>
 agents/<agent>/<topic>
 ```
 
-Changes to `docs_agents/` always require **human review before merge**.
+Changes to `.agents/` always require **human review before merge**.
 
 ---
 
-## docs_agents Structure
+## .agents Structure
 
-The `docs_agents/` directory stores persistent AI review context.
+The `.agents/` directory stores persistent AI review context.
+It is organized into subfolders:
 
-`PROMPT.md` — instructions for long-running AI review sessions;
-contains the initialization sequence, task registry and execution procedure.
+### prompts/
 
-`review_config.yaml` — configuration for review modules based on the repository stack.
+`review_codebase.md`\
+Instructions for running long-term AI-assisted review sessions.\
+Contains the initialization sequence, task registry and execution procedure.
+
+`prompt_evolution/`\
+Suggestions for improving the review prompt, accumulated across sessions.
+
+### config/
+
+`review_config.yaml`\
+Configuration for automated review modules based on the repository stack.
+
+`review_cache.json`\
+Persistent storage of results from previous AI review sessions.
+
+### analysis/
 
 `repository_map.json` — high-level structural overview of the repository.
 
 `dependency_graph.json` — R package dependencies and external data dependencies.
-
-`review_cache.json` — persistent storage of results from previous AI review sessions.
-
-`bugs.md` — structured log of discovered issues.
-
-`refactoring_backlog.md` — long-term improvement backlog.
 
 `shiny_analysis.json` — Shiny application structure and reactivity analysis.
 
@@ -288,7 +297,15 @@ contains the initialization sequence, task registry and execution procedure.
 
 `cicd_analysis.json` — GitHub Actions workflow analysis.
 
-For execution procedures, refer to `docs_agents/PROMPT.md`.
+### reports/
+
+`bugs.md` — structured log of discovered issues.
+
+`refactoring_backlog.md` — long-term improvement backlog.
+
+`review_reports/` — per-task completion reports.
+
+For execution procedures, refer to `.agents/prompts/review_codebase.md`.
 
 ---
 
