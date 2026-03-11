@@ -24,4 +24,5 @@ emailer/emailer.log
 # agents
 .codex/
 .claude/
+.cursor/
 

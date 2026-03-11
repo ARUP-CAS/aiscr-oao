@@ -6,7 +6,7 @@ Tento adresář obsahuje výstupy AI review sessions.
 
 ```
 <task_id>.md             — výstup konkrétního tasku (např. T01.md)
-final_audit.md           — finální souhrnný audit (T09)
+final_audit.md           — finální souhrnný audit (T08)
 ```
 
 ## Struktura každého reportu

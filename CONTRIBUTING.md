@@ -151,3 +151,16 @@ Výstupy AI review se ukládají do:
 - R kód musí být formátován pomocí [`styler`](https://styler.r-lib.org/)
 - dodržujte stávající styl kódu v repozitáři
 - komentáře a dokumentace mohou být psány v češtině nebo angličtině
+
+---
+
+## Dokumentace a konfigurace (správa)
+
+Aby se předešlo duplicitám a rozcházení textů:
+
+- **README.md / README_en.md** — přehled projektu a repozitáře; odkaz na CONTRIBUTING.
+- **CONTRIBUTING.md** — vývojový workflow, pojmenování větví, PR, code style, konvence pro AI agenty.
+- **AGENTS.md** — pravidla a rozsah pro AI agenty; orientace v `.agents/`; „nesmí“ pravidla.
+- **.agents/** — konfigurace a výstupy AI review (review_config.yaml, review_cache.json, prompty, reporty).
+
+Pravidla pro větve, PR a formátování kódu mají být pouze v CONTRIBUTING.md a AGENTS.md; do ostatních souborů (CLAUDE.md, .cursorrules apod.) nekopírujte celé bloky — uvádějte jen odkaz na tyto zdroje.

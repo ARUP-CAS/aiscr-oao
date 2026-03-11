@@ -139,9 +139,10 @@ Specialised capabilities that may improve maintenance efficiency.
 
 Skills are **optional helpers**, not mandatory tools.
 
-- `doc` — reviewing and editing documentation artefacts
-- `gh-fix-ci` — diagnosing and fixing GitHub Actions CI failures
-- `gh-address-comments` — incorporating pull request review comments
+- `gh-fix-ci` — diagnosing and fixing GitHub Actions CI failures.
+- `gh-address-comments` — incorporating pull request review comments.
+- `security-best-practices` — *(optional)* use when reviewing `emailer/`, secrets, or when the user explicitly requests security guidance.
+- `yeet` — *(optional)* stage, commit, push, and open a PR in one flow; useful for agent branches.
 
 ---
 
@@ -282,6 +283,9 @@ Configuration for automated review modules based on the repository stack.
 
 `review_cache.json`\
 Persistent storage of results from previous AI review sessions.
+
+`automation_recommendations.md`\
+Shared recommendations for MCP servers, skills, hooks, and subagents. Use this file (and AGENTS.md) for automation setup — not `.cursor/` or `.claude/`, which are gitignored and not shared.
 
 ### analysis/
 
