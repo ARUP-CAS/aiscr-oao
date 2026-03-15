@@ -163,6 +163,8 @@ Related live systems:
 | AIS CR main site | https://www.aiscr.cz/ | System context |
 | AMCR | https://amcr.aiscr.cz/ | Source of fieldwork data used by the app |
 
+**External APIs consumed:** The app uses **OAI-PMH** (https://api.aiscr.cz/2.2/oai) for organisation metadata and links to **Digitální archiv** (https://digiarchiv.aiscr.cz/) for project/entity views. Canonical API documentation and endpoint definitions are maintained in [aiscr-api-home](https://github.com/ARUP-CAS/aiscr-api-home); see https://api.aiscr.cz/ for OAI-PMH, File API, and Auth API docs. Do not duplicate endpoint specs in this repo.
+
 ---
 
 ## Scope

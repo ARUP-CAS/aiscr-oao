@@ -53,6 +53,8 @@ jsou v aplikaci popsány — samotné odesílání oznámení zajišťuje systé
 - seznam oprávnění vydaných Ministerstvem kultury ČR
 - data o provedených výzkumech z AMČR
 
+**Externí API:** Aplikace spotřebovává OAI-PMH API (api.aiscr.cz) a odkazuje na Digitální archiv (digiarchiv.aiscr.cz). Kanonická dokumentace AMČR API je v repozitáři [aiscr-api-home](https://github.com/ARUP-CAS/aiscr-api-home) a na https://api.aiscr.cz/.
+
 ---
 
 ## Citace
