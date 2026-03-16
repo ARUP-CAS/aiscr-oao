@@ -17,3 +17,12 @@ code/legacy/
 emailer/emails/
 emailer/secret.txt
 emailer/emailer.log
+
+# vscode
+.vscode/
+
+# agents
+.codex/
+.claude/
+.cursor/
+

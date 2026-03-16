@@ -1,47 +1,83 @@
-# Licensed archaeological organizations app
+# Mapa OAO — Mapa oprávněných archeologických organizací
 
 [![Website](https://img.shields.io/website?down_message=down&label=https%3A%2F%2Foao.aiscr.cz%2F&up_message=up&url=https%3A%2F%2Foao.aiscr.cz%2F)](https://oao.aiscr.cz)
 [![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.8178384.svg)](https://doi.org/10.5281/zenodo.8178384)
-![GitHub](https://img.shields.io/github/license/ARUP-CAS/map_oao)
+[![GitHub license](https://img.shields.io/github/license/ARUP-CAS/aiscr-oao)](LICENSE)
 
-## Mapa archeologických organizací (Mapa OAO)
+[ENGLISH VERSION HERE](README_en.md)
 
-A repo containing code for a Shiny app publishing data on organizations 
-with a licence to conduct archaeological excavations in the Czech Republic.
-Currently, the app is in Czech language only, sorry.
+Repozitář obsahuje zdrojový kód aplikace [R Shiny](https://shiny.posit.co/)
+zobrazující data o organizacích oprávněných provádět archeologické výzkumy v ČR.
 
-The app is deployed here: <https://oao.aiscr.cz/>. Originally, it was developed here: <https://github.com/petrpajdla/map_oao/>.
+Aplikace je dostupná na: **<https://oao.aiscr.cz/>**
 
-The app is part of the **Archaeological information system of the Czech Republic**
-(<a href="https://www.aiscr.cz">AIS CR</a>).
+Aplikace je součástí infrastruktury
+[**Archeologického informačního systému ČR** (AIS CR)](https://www.aiscr.cz/).
 
-## How to cite
+---
 
-Please cite this sofware as:
+## Obsah repozitáře
 
-> Pajdla, P. 2023: *Mapa archeologických organizací* *[Map of Archaeological Organizations]*.
-> DOI: [10.5281/zenodo.8178384](https://doi.org/10.5281/zenodo.8178384).
-> Source code: <https://github.com/ARUP-CAS/aiscr-oao>, application: <https://oao.aiscr.cz/>.
-  
+```markdown
+app/          — zdrojový kód Shiny aplikace
+  data/       — zpracovaná geoprostorová data
+  R/          — funkce využívané serverovou částí
+  text/       — stránka O aplikaci a popisy organizací
+  www/        — statické soubory (obrázky, CSS, JS)
+code/         — R skripty pro přípravu dat
+emailer/      — pomocné skripty pro e-mailovou komunikaci
+plots/        — grafy a vizualizace dat
+.github/      — GitHub Actions workflows
+```
 
-A poster presenting the app:
+---
 
-> Pajdla, P. 2022: *Organizace s oprávněním provádět archeologický výzkum: Mapová aplikace*
-> *[Organizations with permission to conduct archaeological research: Map application]*.
-> Počítačová podpora v archeologii 21, 1. 6. 2022 – 3. 6. 2022, Kostelec nad Černými lesy, Czech Republic.
-> DOI: <https://doi.org/10.5281/zenodo.7515094>.
+## Funkcionalita
 
-## Contents
+Aplikace umožňuje:
 
-The **repo** contains:
+- hledání organizací podle polohy nebo katastrálního území
+- zobrazení mapy působnosti organizací
+- přehled organizací v jednotlivých krajích
+- stažení dat ve formátu GeoPackage (CC BY 4.0)
 
-- [app/](/app/) Code for the [Shiny](https://shiny.rstudio.com/) app:
-  - [app/data/](/app/data/) Processed geospatial data;
-  - [app/R/](/app/R/) Functions used by the server;
-  - [app/text/](/app/text/) About page and descriptions for some of the OAOs;
-  - [app/www/](/app/www/) Images, .CSS etc.
-- [code/](/code/): R scripts preparing data to desired shape and format.
+Informace o oznamovací povinnosti OAO vůči krajům a o oznamování přes AMČR
+jsou v aplikaci popsány — samotné odesílání oznámení zajišťuje systém
+[AMČR](https://amcr-info.aiscr.cz/), nikoli tato aplikace.
 
-## Licenses
+---
 
-Code is released under [MIT License](LICENSE), data, texts, figures etc. under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) license.
+## Datové zdroje
+
+- smlouvy uzavřené mezi AV ČR a oprávněnými organizacemi
+- seznam oprávnění vydaných Ministerstvem kultury ČR
+- data o provedených výzkumech z AMČR
+
+**Externí API:** Aplikace spotřebovává OAI-PMH API (api.aiscr.cz) a odkazuje na Digitální archiv (digiarchiv.aiscr.cz). Kanonická dokumentace AMČR API je v repozitáři [aiscr-api-home](https://github.com/ARUP-CAS/aiscr-api-home) a na https://api.aiscr.cz/.
+
+---
+
+## Citace
+
+```markdown
+Pajdla, P. 2023: Mapa oprávněných archeologických organizací
+[Map of Authorized Archaeological Organizations].
+DOI: 10.5281/zenodo.8178384.
+Zdrojový kód: https://github.com/ARUP-CAS/aiscr-oao,
+aplikace: https://oao.aiscr.cz/.
+```
+
+---
+
+## Licence
+
+Kód je uvolněn pod licencí [MIT](LICENSE).  
+Data, texty a obrázky jsou uvolněny pod licencí [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+
+---
+
+## Přispívání
+
+Viz [CONTRIBUTING.md](CONTRIBUTING.md).
+
+Chyby hlaste jako [GitHub Issues](https://github.com/ARUP-CAS/aiscr-oao/issues).

@@ -1,0 +1,51 @@
+{
+  "_meta": {
+    "schema_version": "1",
+    "generated_by": "bootstrap",
+    "last_updated": null,
+    "task_id": "T01",
+    "note": "Inicializační skeleton. Agent musí při T01 doplnit skutečné hodnoty analýzou zdrojového kódu."
+  },
+  "repository": {
+    "name": "aiscr-oao",
+    "url": "https://github.com/ARUP-CAS/aiscr-oao",
+    "type": "shiny-application",
+    "deployed_at": "https://oao.aiscr.cz/",
+    "version": "v3.1.0",
+    "branch": "main"
+  },
+  "root_directories": {
+    "app": {
+      "purpose": "Zdrojový kód Shiny aplikace"
+    },
+    "code": {
+      "purpose": "R skripty pro přípravu a aktualizaci geoprostorových dat"
+    },
+    "emailer": {
+      "purpose": "ZJISTIT V T05 — nečíst dokumentaci, přečíst zdrojový kód"
+    },
+    "plots": {
+      "purpose": "Grafy a vizualizace dat OAO"
+    },
+    ".github": {
+      "purpose": "GitHub Actions workflows pro CI/CD a deployment"
+    }
+  },
+  "app_structure": {
+    "entry_points": [],
+    "modules_dir": "app/R",
+    "data_dir": {
+      "path": "app/data",
+      "note": "Generovaná geoprostorová data — nemodifikovat ručně, aktualizovat přes code/"
+    },
+    "static_assets": "app/www",
+    "content_files": "app/text",
+    "known_modules": []
+  },
+  "key_files": {
+    "map_oao.Rproj": "RStudio project file",
+    "CITATION.cff": "Citační metadata",
+    "renv.lock": "Zámek R závislostí — ověřit existenci",
+    ".gitignore": "Ignorované soubory"
+  }
+}

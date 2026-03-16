@@ -1,0 +1,25 @@
+# CODEOWNERS — aiscr-oao
+#
+# Tento soubor definuje vlastníky kódu a automatické přiřazování reviewerů v PR.
+# Viz: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Výchozí vlastníci celého repozitáře
+* @petrpajdla
+
+# Shiny aplikace
+app/ @petrpajdla
+
+# Skripty pro přípravu dat
+code/ @petrpajdla
+
+# Emailer komponenta
+emailer/ @petrpajdla
+
+# Grafy a vizualizace
+plots/ @petrpajdla
+
+# CI/CD konfigurace
+.github/ @petrpajdla
+
+# AI review artefakty — vyžadují lidský review před mergem
+/.agents/ @motyc
