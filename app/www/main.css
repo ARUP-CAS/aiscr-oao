@@ -30,20 +30,25 @@
   padding: 2rem 2rem;
 }
 
-.navbar {
-  background-color: #303641; /*#3E3F3A*/
-  margin-bottom: 0px;
+/* --- NAVBAR TWO-ROW LAYOUT --- */
+
+/* Wrapper for both rows */
+.navbar-wrapper {
+  background-color: #303641;
+  margin-bottom: 0;
 }
 
-.navbar-nav {
-  padding: 15px 0px;
-  letter-spacing: 0.6px;
+/* Row 1: Brand + Logo */
+.navbar-top {
+  background-color: #303641;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 6px 1.5rem;
 }
 
-.navbar-logo {
-  padding-top: 10px;
-  padding-bottom: 10px;
-  margin-right: 20px;
+.navbar-top-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .navbar-brand {
@@ -51,18 +56,221 @@
   font-family: "Alegreya Sans SC", sans-serif;
   font-weight: 500;
   font-style: normal;
+  color: #ffffff !important;
+  font-size: 18px;
+  padding: 4px 0;
+  float: none;
+  height: auto;
 }
 
-.navbar-header {
-  padding: 15px 2rem;
+.navbar-brand:hover {
+  color: #cccccc !important;
+}
+
+.navbar-logo {
+  padding: 2px 0;
+  flex-shrink: 0;
+}
+
+.navbar-logo img {
+  height: 50px;
+}
+
+/* Row 2: Navigation */
+.navbar-bottom {
+  background-color: #303641 !important;
+  margin-bottom: 0;
+  border: none;
+  border-radius: 0;
+  min-height: 0;
+}
+
+.navbar-bottom .navbar-nav {
+  padding: 0;
+  letter-spacing: 0.5px;
+}
+
+.navbar-bottom .navbar-nav > li > a {
+  padding: 8px 12px;
+  font-size: 14px;
+  color: #b0b0b0 !important;
+}
+
+.navbar-bottom .navbar-nav > li > a:hover {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+.navbar-bottom .navbar-nav > li.active > a,
+.navbar-bottom .navbar-nav li.active > a {
+  color: #ffffff !important;
+}
+
+/* Also target via data-route attribute for shiny.router */
+.navbar-bottom .navbar-nav > li[data-route-active="true"] > a {
+  color: #ffffff !important;
+}
+
+.navbar-bottom .navbar-header {
+  padding: 0;
+  min-height: 0;
+}
+
+/* Brand text: show full on large screens, short on small */
+.brand-short {
+  display: none;
+}
+
+/* Nav labels: show full on large screens, short on medium */
+.nav-label-short {
+  display: none;
+}
+
+/* Medium screens (tablets): show short labels */
+@media (min-width: 768px) and (max-width: 1199px) {
+  .brand-full {
+    display: none;
+  }
+  .brand-short {
+    display: inline;
+  }
+  .nav-label-full {
+    display: none;
+  }
+  .nav-label-short {
+    display: inline;
+  }
+  .navbar-brand {
+    font-size: 16px;
+  }
+  .navbar-logo img {
+    height: 40px;
+  }
+}
+
+/* Small screens (mobile): collapsed menu */
+@media (max-width: 767px) {
+  .brand-full {
+    display: none;
+  }
+  .brand-short {
+    display: inline;
+  }
+  .nav-label-full {
+    display: inline;
+  }
+  .nav-label-short {
+    display: none;
+  }
+
+  .navbar-top {
+    padding: 4px 1rem;
+  }
+
+  .navbar-brand {
+    font-size: 15px;
+  }
+
+  .navbar-logo img {
+    height: 32px;
+  }
+
+  .navbar-bottom .navbar-header {
+    padding: 2px 8px;
+  }
+
+  .navbar-bottom .navbar-nav {
+    padding: 0;
+    margin: 0;
+  }
+
+  .navbar-bottom .navbar-nav > li > a {
+    padding: 10px 15px;
+    font-size: 14px;
+    color: #b0b0b0 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .navbar-bottom .navbar-nav > li > a:hover {
+    color: #ffffff !important;
+  }
+  
+  .navbar-bottom .navbar-nav > li.active > a,
+  .navbar-bottom .navbar-nav li.active > a {
+    color: #ffffff !important;
+  }
+  
+  /* Also target via data-route attribute for shiny.router */
+  .navbar-bottom .navbar-nav > li[data-route-active="true"] > a {
+    color: #ffffff !important;
+  }
+  
+  .navbar-bottom .navbar-nav > li:last-child > a {
+    border-bottom: none;
+  }
+
+  .navbar-collapse {
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+
+  /* Slightly smaller text on mobile */
+  .router {
+    padding: 1rem;
+    font-size: 13px;
+  }
+
+  .router h1 { font-size: 22px; }
+  .router h2 { font-size: 20px; }
+  .router h3 { font-size: 17px; }
+  .router h4 { font-size: 15px; }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+  .router {
+    font-size: 12px;
+    padding: 0.75rem;
+  }
+
+  .navbar-brand {
+    font-size: 13px;
+  }
+
+  .navbar-logo img {
+    height: 28px;
+  }
+}
+
+/* Hamburger toggle styling */
+.navbar-inverse .navbar-toggle {
+  border-color: rgba(255, 255, 255, 0.3);
+  margin: 4px 8px;
+  padding: 6px 8px;
+}
+
+.navbar-inverse .navbar-toggle:hover,
+.navbar-inverse .navbar-toggle:focus {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.navbar-inverse .navbar-toggle .icon-bar {
+  background-color: #ffffff;
+}
+
+/* Ensure smooth collapse animation */
+.navbar-collapse.collapsing,
+.navbar-collapse.in {
+  background-color: #303641;
 }
 
 #clickmap {
-  height: calc(100vh - 200px) !important;
+  height: calc(100vh - 220px) !important;
 }
 
 #map {
-  height: calc(100vh - 125px) !important;
+  height: calc(100vh - 145px) !important;
 }
 
 hr {
@@ -96,7 +304,7 @@ h3, h4, h5, h6 {
 } */
 /* table thead th { border-bottom: 1px solid #ddd; } */
 th, td { padding: 5px; }
-thead, tfoot,  { background: #eee; } /* tr:nth-child(even) */
+thead, tfoot  { background: #eee; } /* tr:nth-child(even) */
 
 
 

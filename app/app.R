@@ -6,7 +6,7 @@
 
 # packages ----
 library(shiny)
-library(shiny.router)
+suppressMessages(library(shiny.router))
 library(leaflet)
 library(DT)
 library(dplyr)
@@ -24,8 +24,8 @@ sleep <- 0.4
 
 # change when data/app is updated
 
-datestamp <<- "2026-02-18"
-appversion <<- "3.1.0"
+datestamp <<- "2026-04-17"
+appversion <<- "3.2.0"
 
 url_da <<- "https://digiarchiv.aiscr.cz/results?entity=projekt&f_organizace="
 url_da_akce <<- "https://digiarchiv.aiscr.cz/results?entity=akce&f_organizace="
@@ -778,87 +778,96 @@ leaflet_map <- oao_scope %>%
 
 # navbar ------------------------------------------------------------------
 
-menubar <- tags$nav(
-  class = "navbar navbar-inverse navbar-static-top",
-  # menu visible on large screens
+menubar <- tags$div(
+  class = "navbar-wrapper",
+  # Row 1: Brand (left) + Logo (right)
   tags$div(
-    class = "container-fluid hidden-xs hidden-sm hidden-md",
+    class = "navbar-top",
     tags$div(
-      class = "navbar-header",
+      class = "navbar-top-inner",
       tags$a(
         class = "navbar-brand",
         href = "#!/",
         icon("fas fa-map-marked-alt"),
-        "Mapa oprávněných archeologických organizací"
-      )
-    ),
-    tags$ul(
-      class = "nav navbar-nav",
-      tags$li(
-        a(href = route_link("/"), icon("fas fa-search"), "Hledej podle polohy")
+        tags$span(class = "brand-full", "Mapa oprávněných archeologických organizací"),
+        tags$span(class = "brand-short", "Mapa OAO")
       ),
-      tags$li(
-        a(href = route_link("detail"), icon("fas fa-map"), "Mapa působnosti")
-      ),
-      tags$li(
-        a(href = route_link("list"), icon("fas fa-bars"), "Seznam organizací")
-      ),
-      tags$li(
+      tags$div(
+        class = "navbar-logo",
         a(
-          href = route_link("kraje"),
-          icon("fas fa-drafting-compass"),
-          "Přehled krajů"
+          href = 'https://www.aiscr.cz/',
+          target = '_blank',
+          tags$img(src = 'AISCR_CZ_H_White.png', height = '50px')
         )
-      ),
-      tags$li(
-        a(
-          href = "https://amcr.aiscr.cz/oznameni/",
-          target = "_blank",
-          icon_ext_link,
-          "Oznámit stavební záměr"
-        )
-      ),
-      tags$li(
-        a(href = route_link("about"), icon("fas fa-info-circle"), "O aplikaci")
-      )
-    ),
-    tags$div(
-      class = "navbar-right navbar-logo",
-      a(
-        href = 'https://www.aiscr.cz/',
-        target = '_blank',
-        tags$img(src = 'AISCR_CZ_H_White.png', height = '60px')
       )
     )
   ),
-  # menu visible on small screens
-  tags$div(
-    class = "container visible-xs visible-sm visible-md",
+  # Row 2: Navigation (collapsible on mobile)
+  tags$nav(
+    class = "navbar navbar-inverse navbar-static-top navbar-bottom",
     tags$div(
-      class = "navbar-header",
-      tags$a(
-        class = "navbar-brand",
-        href = "#!/",
-        icon("fas fa-map-marked-alt"),
-        "Mapa OAO"
-      )
-    ),
-    tags$ul(
-      class = "nav navbar-nav",
-      tags$li(
-        a(href = route_link("/"), icon("fas fa-search"), "Hledej")
+      class = "container-fluid",
+      tags$div(
+        class = "navbar-header",
+        # hamburger toggle button (visible on small screens)
+        tags$button(
+          type = "button",
+          class = "navbar-toggle collapsed",
+          `data-toggle` = "collapse",
+          `data-target` = "#navbar-content",
+          `aria-expanded` = "false",
+          tags$span(class = "sr-only", "Toggle navigation"),
+          tags$span(class = "icon-bar"),
+          tags$span(class = "icon-bar"),
+          tags$span(class = "icon-bar")
+        )
       ),
-      tags$li(
-        a(href = route_link("detail"), icon("fas fa-map"), "Mapa")
-      ),
-      tags$li(
-        a(href = route_link("list"), icon("fas fa-bars"), "Seznam")
-      ),
-      tags$li(
-        a(href = route_link("kraje"), icon("fas fa-drafting-compass"), "Kraje")
-      ),
-      tags$li(
-        a(href = route_link("about"), icon("fas fa-info-circle"), "Aplikace")
+      # collapsible menu content
+      tags$div(
+        class = "collapse navbar-collapse",
+        id = "navbar-content",
+        tags$ul(
+          class = "nav navbar-nav",
+          tags$li(
+            a(href = route_link("/"), icon("fas fa-search"),
+              tags$span(class = "nav-label-full", "Hledej podle polohy"),
+              tags$span(class = "nav-label-short", "Hledej")
+            )
+          ),
+          tags$li(
+            a(href = route_link("detail"), icon("fas fa-map"),
+              tags$span(class = "nav-label-full", "Mapa působnosti"),
+              tags$span(class = "nav-label-short", "Mapa")
+            )
+          ),
+          tags$li(
+            a(href = route_link("list"), icon("fas fa-bars"),
+              tags$span(class = "nav-label-full", "Seznam organizací"),
+              tags$span(class = "nav-label-short", "Seznam")
+            )
+          ),
+          tags$li(
+            a(href = route_link("kraje"), icon("fas fa-drafting-compass"),
+              tags$span(class = "nav-label-full", "Přehled krajů"),
+              tags$span(class = "nav-label-short", "Kraje")
+            )
+          ),
+          tags$li(
+            a(
+              href = "https://amcr.aiscr.cz/oznameni/",
+              target = "_blank",
+              icon_ext_link,
+              tags$span(class = "nav-label-full", "Oznámit stavební záměr"),
+              tags$span(class = "nav-label-short", "Oznámit záměr")
+            )
+          ),
+          tags$li(
+            a(href = route_link("about"), icon("fas fa-info-circle"),
+              tags$span(class = "nav-label-full", "O aplikaci"),
+              tags$span(class = "nav-label-short", "Aplikace")
+            )
+          )
+        )
       )
     )
   )
@@ -881,6 +890,7 @@ ui <- fluidPage(
       src = "https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.1/cookieconsent.min.js"
     ),
     tags$script(src = "cookie-consent.js"),
+    tags$script(src = "navbar-active.js"),
     # Fonts and styles
     tags$link(rel = "preconnect", href = "https://fonts.googleapis.com"),
     tags$link(rel = "preconnect", href = "https://fonts.gstatic.com"),
