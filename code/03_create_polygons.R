@@ -30,15 +30,16 @@ url <- "https://docs.google.com/spreadsheets/d/1knxDiUuCVqwgzgQkodhGg0vMe6w6LsKi
 # bg data
 kraje <- RCzechia::kraje()
 okresy <- RCzechia::okresy()
+katastry <- RCzechia::katastry()
 
-# find file ku
-unz_files <- list.files(
-  here::here("data/input/ruian"),
-  recursive = TRUE,
-  full.names = TRUE
-)
-p_ku <- unz_files[stringr::str_detect(unz_files, "KAT.+shp")]
-katastry <- sf::st_read(p_ku)
+# # find file ku
+# unz_files <- list.files(
+#   here::here("data/input/ruian"),
+#   recursive = TRUE,
+#   full.names = TRUE
+# )
+# p_ku <- unz_files[stringr::str_detect(unz_files, "KAT.+shp")]
+# katastry <- sf::st_read(p_ku)
 
 
 # uzemni pusobnost --------------------------------------------------------
@@ -97,6 +98,19 @@ oao_okresy <- oao_uzemi %>%
 # x[!x %in% katastry$NAZEV_KU]
 
 # katastry
+# Check, jestli všechny názvy katastrů v datech jsou ve vrstvě.
+stopifnot(
+  oao_uzemi |> 
+    filter(!is.na(katastr)) |> 
+    separate2longer("katastr", 400) |> 
+    select(value) |> 
+    distinct(value) |> 
+    arrange(value) |> 
+    mutate(x = value %in% katastry$NAZEV) |> 
+    pull(x) |> 
+    all()
+)
+
 oao_katastry <- oao_uzemi %>%
   filter(is_katastr) %>%
   select(amcr_id, katastr) %>%
@@ -124,10 +138,10 @@ oao_uzemi_poly <- oao_republika %>%
   sf::st_as_sf()
 
 # valid geometry?
-sf::st_is_valid(oao_uzemi_poly) %>% all()
+stopifnot(sf::st_is_valid(oao_uzemi_poly) %>% all())
 
 # missing polygons
-all(oao_uzemi$amcr_id %in% oao_uzemi_poly$amcr_id)
+stopifnot(oao_uzemi$amcr_id %in% oao_uzemi_poly$amcr_id)
 
 
 # total covered area (arranging in tables) --------------------------------
