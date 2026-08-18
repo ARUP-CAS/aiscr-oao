@@ -22,8 +22,6 @@ st_overwrite <- function(x, path) {
 
 # data --------------------------------------------------------------------
 
-url <- "https://services.cuzk.cz/shp/stat/epsg-5514/1.zip"
-
 # paths
 p_data <- here::here("data")
 p_in <- paste0(p_data, "/input")
@@ -39,43 +37,49 @@ check_dirs(p_in)
 check_dirs(p_proc)
 check_dirs(p_fin)
 
+# Data from CUZK
+# url <- "https://services.cuzk.cz/shp/stat/epsg-5514/1.zip"
+
 # dl
-options(timeout = 120)
-download.file(url, p_zip)
+# options(timeout = 120)
+# download.file(url, p_zip)
 
 # unz
-unzip(p_zip, exdir = p_unz, overwrite = TRUE)
+# unzip(p_zip, exdir = p_unz, overwrite = TRUE)
 
 # find file
-unz_files <- list.files(p_unz, recursive = TRUE)
-p_ku_in <- paste0(p_unz, unz_files[stringr::str_detect(unz_files, "KAT.+shp")])
+# unz_files <- list.files(p_unz, recursive = TRUE)
+# p_ku_in <- paste0(p_unz, unz_files[stringr::str_detect(unz_files, "KAT.+shp")])
+# Obsolete, dl via RCzechia
+ku <- RCzechia::katastry()
 
-# okr
-okr <- RCzechia::okresy() %>% 
-  st_drop_geometry() %>% 
-  ungroup() %>% 
-  dplyr::select(KOD_LAU1, NAZ_LAU1)
+# # okr
+# okr <- RCzechia::okresy() |> 
+#   st_drop_geometry() |> 
+#   dplyr::ungroup() |> 
+#   dplyr::select(KOD_LAU1, NAZ_LAU1)
 
 
 # prep ku layer -----------------------------------------------------------
 
-ku <- st_read(p_ku_in)
+# ku <- st_read(p_ku_in)
 
 
 # centroids ---------------------------------------------------------------
 
-ku_centroids <- ku %>% 
-  dplyr::select(NAZEV, LAU1_KOD) %>% 
-  dplyr::left_join(okr, by = c("LAU1_KOD" = "KOD_LAU1")) %>% 
-  st_centroid() %>%
-  st_transform(4326) %>% 
-  st_simplify() %>% 
-  dplyr::select(ku = NAZEV, okr = NAZ_LAU1)
+ku_centroids <- ku |> 
+  # dplyr::select(NAZEV, LAU1_KOD) |> 
+  # dplyr::left_join(okr, by = c("LAU1_KOD" = "KOD_LAU1")) |> 
+  st_centroid(of_largest_polygon = TRUE) |>
+  st_transform(4326) |> 
+  st_simplify() |> 
+  mutate(ku = NAZEV)
+  # dplyr::select(ku = NAZEV, okr = NAZ_LAU1)
 
 # plot(st_geometry(ku_centroids))
 
 # output ------------------------------------------------------------------
 
-ku_centroids %>% 
+ku_centroids |> 
   st_overwrite(p_ku_out)
 

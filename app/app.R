@@ -24,8 +24,8 @@ sleep <- 0.4
 
 # change when data/app is updated
 
-datestamp <<- "2026-04-17"
-appversion <<- "3.2.0"
+datestamp <<- "2026-08-17"
+appversion <<- "3.2.1"
 
 url_da <<- "https://digiarchiv.aiscr.cz/results?entity=projekt&f_organizace="
 url_da_akce <<- "https://digiarchiv.aiscr.cz/results?entity=akce&f_organizace="
@@ -64,8 +64,9 @@ oao_scope <- oao_sf("data/oao_scope.geojson")
 oao_grid <- oao_sf("data/oao_grid.geojson")
 
 ku_centroids <- oao_sf("data/ku.geojson") %>%
-  dplyr::arrange(ku) %>%
-  dplyr::transmute(ku = paste0(ku, " (okr. ", okr, ")"))
+  dplyr::arrange(ku) 
+  # Disabled okres notations
+  # dplyr::transmute(ku = paste0(ku, " (okr. ", okr, ")"))
 
 oao_rep <- oao_scope %>%
   dplyr::filter(area >= 7.8e10) %>%
