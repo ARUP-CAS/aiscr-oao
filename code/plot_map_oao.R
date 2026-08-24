@@ -6,7 +6,7 @@ cap <- function(x = NA_character_) {
   if (is.na(x)) {
     paste0("Data: AIS CR (", today(), ")")
   } else {
-    paste0("Data: AIS CR, ", x, " (", today(), ")")
+    paste0("Data: AIS CR ", x, " (", today(), ")")
   }
 }
 
@@ -31,7 +31,7 @@ hex <- st_make_grid(republika, square = FALSE, cellsize = 5e3) %>%
 
 # oao ---------------------------------------------------------------------
 
-oao_poly <- st_read(here::here("data/final/oao_territory_poly_simple.geojson")) %>% 
+oao_poly <- st_read(here::here("data/final/oao_territory_poly.geojson")) %>% 
   st_transform(5514)
 
 hex_oao <- hex %>% 
@@ -45,6 +45,19 @@ hex_oao_union <- hex_oao %>%
   unnest(data) %>% 
   st_as_sf()
 
+hex_oao_union2 <- hex_oao %>% 
+  mutate(oao = case_when(
+      oao >= 12 & oao <= 13 ~ "12-13", 
+      oao >= 14 & oao <= 15 ~ "14-15", 
+      oao >= 16 & oao <= 17 ~ "16-17",
+      oao >= 18 & oao <= 19 ~ "18-19",
+      oao >= 20 & oao <= 21 ~ "20-21")) |> 
+  group_by(oao) %>% 
+  nest() %>% 
+  mutate(data = map(data, \(x) st_union(x))) %>% 
+  unnest(data) %>% 
+  st_as_sf()
+
 hex_oao_union %>% 
   mutate(oao = factor(oao)) %>% 
   ggplot() +
@@ -52,10 +65,25 @@ hex_oao_union %>%
   geom_sf(color = "black") +
   scale_fill_viridis_d(direction = -1) +
   theme_minimal() +
-  labs(fill = "Počet OAO", caption = cap()) +
+  labs(fill = "Počet OAO", caption = cap("https://oao.aiscr.cz/")) +
   theme(legend.position = "bottom") +
-  guides(fill = guide_legend(nrow = 1))
+  guides(fill = guide_legend(nrow = 1)) +
+  ggspatial::annotation_north_arrow(style = ggspatial::north_arrow_minimal(), which_north = "true")
 
 ggsave(here::here("plots/oao_map.png"), width = 14, height = 8)
 
+hex_oao_union2 %>% 
+  mutate(oao = factor(oao)) %>% 
+  ggplot() +
+  aes(fill = oao) +
+  geom_sf(color = "black") +
+  scale_fill_viridis_d(direction = -1) +
+  theme_minimal() +
+  labs(fill = "Počet OAO", caption = cap("https://oao.aiscr.cz/")) +
+  theme(legend.position = "bottom") +
+  guides(fill = guide_legend(nrow = 1)) +
+  ggspatial::annotation_north_arrow(style = ggspatial::north_arrow_minimal(), which_north = "true")
 
+ggsave(here::here("plots/oao_map2.png"), width = 14, height = 8)
+
+file.copy(here::here("plots/oao_map2.png"), here::here("app/www/map-oao.png"), overwrite = TRUE)
