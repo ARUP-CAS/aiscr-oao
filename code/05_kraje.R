@@ -5,7 +5,7 @@ url <- "https://sbirkapp.gov.cz/vyhledavani/vysledek?format_exportu=csv&hlavni_t
 api <- "https://api.aiscr.cz/2.2/oai?verb=ListRecords&set=ruian_kraj&metadataPrefix=oai_amcr"
 
 # Paths
-p <- here::here("data/input/kraje/")
+p <- here::here("data/input")
 
 # Funs ----
 # Download CSV file from 'sbirka'
@@ -31,7 +31,7 @@ download_csv <- function(url, path) {
 
 # Read latest downloaded CSV
 read_latest <- function(path) {
-  csvs <- list.files(path)
+  csvs <- list.files(path, pattern = "narizeni-kraje")
 
   latest <- csvs |> stringr::str_extract("\\d{4}(-\\d{2}){2}") |> max()
 
@@ -49,7 +49,7 @@ get_email_from_api <- function(url) {
     kraj = sapply(resp, \(x) {
       x |> xml2::xml_find_first(xpath = ".//amcr:nazev") |> xml2::xml_text()
     }),
-    email = sapply(x, \(x) {
+    email = sapply(resp, \(x) {
       x |> xml2::xml_find_first(xpath = ".//amcr:email") |> xml2::xml_text()
     })
   )
