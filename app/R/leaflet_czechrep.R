@@ -1,5 +1,39 @@
+#' Add the CartoDB Positron ("Desaturovaná mapa") base layer
+#'
+#' CARTO basemap tiles now require an API key, passed as a `?key=` query
+#' parameter. The key is read from the `CARTO_API_KEY` environment variable
+#' (set it in `.Renviron`, locally and on the Shiny Server). `providerTileOptions()`
+#' cannot inject it because the bundled leaflet-providers CartoDB URL has no
+#' `{key}` placeholder, so the tile URL is built explicitly here. When the key is
+#' missing, fall back to OSM tiles so the app still renders in local development.
+#'
+#' @param map A leaflet map object.
+#' @param group Layer group name.
+#'
+#' @return The leaflet map with the base layer added.
+add_carto_positron <- function(map, group = "Desaturovaná mapa") {
+  carto_key <- Sys.getenv("CARTO_API_KEY", unset = "")
+
+  if (nzchar(carto_key)) {
+    leaflet::addTiles(
+      map,
+      urlTemplate = sprintf(
+        "https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png?key=%s",
+        carto_key),
+      attribution = paste0(
+        "&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> ",
+        "&copy; <a href='https://carto.com/attributions'>CARTO</a>"),
+      options = leaflet::tileOptions(maxZoom = 20),
+      group = group)
+  } else {
+    warning("CARTO_API_KEY not set; using OpenStreetMap tiles for '", group, "'.")
+    leaflet::addTiles(map, group = group)
+  }
+}
+
+
 #' Leaflet map, Czech Republic extent
-#' 
+#'
 #' Creates leaflet object with extent and zoom set to the Czech Republic.
 #' Tiles include CartoDB Pozitron map, basic OSM and CUZK ZM.
 #'
@@ -11,13 +45,11 @@
 #' @examples
 leaflet_czechrep <- function(data) {
   data %>% leaflet::leaflet(
-    options = leaflet::leafletOptions(minZoom = 7, maxZoom = 16)) %>% 
-    leaflet::setView(zoom = 7, lng = 15.4730, lat = 49.8175) %>% 
+    options = leaflet::leafletOptions(minZoom = 7, maxZoom = 16)) %>%
+    leaflet::setView(zoom = 7, lng = 15.4730, lat = 49.8175) %>%
     leaflet::setMaxBounds(11, 48, 20, 52) %>%
-    leaflet::addTiles(group = "Open Street Map") %>% 
-    leaflet::addProviderTiles(
-      leaflet::providers$CartoDB.Positron, 
-      group = "Desaturovaná mapa") %>% 
+    leaflet::addTiles(group = "Open Street Map") %>%
+    add_carto_positron(group = "Desaturovaná mapa") %>%
     leaflet::addTiles(
       urlTemplate = paste0("https://ags.cuzk.cz/arcgis1/rest/services/ZTM_WM/", 
                            #"http://ags.cuzk.cz/arcgis/rest/services/zmwm/",
