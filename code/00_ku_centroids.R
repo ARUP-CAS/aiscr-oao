@@ -73,7 +73,7 @@ ku_centroids <- ku |>
   st_centroid(of_largest_polygon = TRUE) |>
   st_transform(4326) |> 
   st_simplify() |> 
-  mutate(ku = NAZEV)
+  dplyr::mutate(ku = NAZEV)
   # dplyr::select(ku = NAZEV, okr = NAZ_LAU1)
 
 # plot(st_geometry(ku_centroids))

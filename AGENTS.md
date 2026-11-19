@@ -13,7 +13,7 @@ A nested `AGENTS.md` in a subdirectory takes precedence for that subtree.
 **Repository:** `ARUP-CAS/aiscr-oao`  
 **Type:** R Shiny application  
 **Published at:** https://oao.aiscr.cz/  
-**Version:** v3.1.0 (January 2026)  
+**Version:** v3.3.0 (November 2026)  
 **Licence:** MIT (code), CC BY 4.0 (data, texts, figures)
 
 This repository contains the **Mapa OAO** application — an interactive map
