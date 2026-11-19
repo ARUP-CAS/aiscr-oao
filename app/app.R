@@ -24,8 +24,8 @@ sleep <- 0.4
 
 # change when data/app is updated
 
-datestamp <<- "2026-08-17"
-appversion <<- "3.2.3"
+datestamp <<- "2026-11-19"
+appversion <<- "3.3.0"
 
 url_da <<- "https://digiarchiv.aiscr.cz/results?entity=projekt&f_organizace="
 url_da_akce <<- "https://digiarchiv.aiscr.cz/results?entity=akce&f_organizace="
@@ -574,6 +574,8 @@ details_server <- function(input, output, session) {
           amcr_id,
           nazev_zkraceny,
           nazev,
+          zrizovatel,
+          typ_zrizovatele,
           adresa,
           app = web_app,
           web = web0,

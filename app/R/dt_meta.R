@@ -18,6 +18,8 @@ dt_create <- function(data) {
         "Organizace" = "label",
         "AMČR ID" = "amcr_id",
         "Typ organizace" = "typ",
+        "Zřizovatel" = "zrizovatel",
+        "Typ zřizovatele" = "typ_zrizovatele",
         # "IČO" = "ico",
         "Webové stránky" = "web",
         "Email" = "email",
@@ -33,7 +35,7 @@ dt_create <- function(data) {
         scroller = TRUE,
         columnDefs = list(
           # list(className = 'dt-right', targets = c(0)),
-          list(className = 'dt-center', targets = c(0, 7:9)))
+          list(className = 'dt-center', targets = c(0, 9:11)))
       )
     )
 }
@@ -52,7 +54,7 @@ dt_data_prep <- function(data, url) {
     dplyr::mutate(
       # adresa = str_replace(adresa, ", ", "<br>"),
       dplyr::across(
-        c("label"),
+        c("label", "zrizovatel"),
         \(x) stringr::str_replace_all(stringr::str_wrap(x, width = 32), "\\n", "<br>")),
       dplyr::across(
         dplyr::ends_with(c("from", "to")), 
@@ -63,6 +65,6 @@ dt_data_prep <- function(data, url) {
       link_map = paste0("<a href='", url, "detail?oao=", 
                         amcr_id, "/'>", icon_map_link, "</a>"),
       amcr = if_else(amcr, "&#x2714;", "&#10008;")) %>% 
-    dplyr::select(link_map, label, amcr_id, typ, web, email, telefon, mk_to, av_to, amcr)
+    dplyr::select(link_map, label, amcr_id, typ, zrizovatel, typ_zrizovatele, web, email, telefon, mk_to, av_to, amcr)
 }
 
