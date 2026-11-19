@@ -37,7 +37,7 @@ ident_cely <- setNames(orgs$amcr_id, orgs$nazev_zkraceny)
 # https://amcr.aiscr.cz/projekt/vyber?typ_projektu=1136&stav=2&stav=3&stav=4&stav=5&stav=6&datum_zahajeni_after=1.1.2021&datum_ukonceni_after=1.1.2021&leaflet-base-layers_90=on
 proj <- read_csv(here::here("data/input/export_amcr_2026-08-17.csv")) |> 
   janitor::clean_names() |> 
-  mutate(org_ident_cely = unname(orgs_amcr_id[organizace]))
+  mutate(org_ident_cely = unname(ident_cely[organizace]))
 
 
 # oao s platnou dohodou
