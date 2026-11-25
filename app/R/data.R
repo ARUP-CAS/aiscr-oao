@@ -116,7 +116,7 @@ oao_meta <- function(dsn, client_url) {
         ),
         ""
       ),
-      telefon = dplyr::if_else(is.na(telefon), "–", telefon),
+      # telefon = dplyr::if_else(is.na(telefon), "–", telefon),
       telefon = stringr::str_replace_all(telefon, ";\\s", ", "),
       ror = dplyr::if_else(
         !is.na(ror),
