@@ -14,6 +14,24 @@ dt_create <- function(data) {
       extensions = 'Scroller',
       rownames = FALSE,
       filter = list(position = "top", clear = TRUE, plain = FALSE),
+      # keep selected values of dropdown filters visible as "buttons";
+      # DT by default hides them on blur and shows the JSON text instead
+      callback = DT::JS(
+        "$(table.table().container()).find('thead td[data-type=\"factor\"]').each(function() {",
+        "  var $x = $(this).children('div').last();",
+        "  var $input = $(this).children('div').first().children('input');",
+        "  var sel = $x.children('select')[0].selectize;",
+        "  if (!sel) return;",
+        "  sel.settings.placeholder = 'Vše'; sel.updatePlaceholder();",
+        "  sel.off('blur');",
+        "  sel.on('blur', function() {",
+        "    if (sel.getValue().length === 0) {",
+        "      $x.hide().trigger('hide'); $input.parent().show();",
+        "    }",
+        "    $input.trigger('blur');",
+        "  });",
+        "});"
+      ),
       colnames = c(
         " " = "link_map",
         "Organizace" = "label",
