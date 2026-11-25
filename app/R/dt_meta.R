@@ -8,11 +8,12 @@
 #'
 #' @examples
 dt_create <- function(data) {
-  data |> 
+  dt <- data |>
     DT::datatable(
       escape = FALSE,
-      extensions = 'Scroller', 
+      extensions = 'Scroller',
       rownames = FALSE,
+      filter = list(position = "top", clear = TRUE, plain = FALSE),
       colnames = c(
         " " = "link_map",
         "Organizace" = "label",
@@ -34,10 +35,24 @@ dt_create <- function(data) {
         scrollY = "calc(100vh - 340px)",
         scroller = TRUE,
         columnDefs = list(
+          # organisation name wraps in the browser; search runs on the raw name
+          list(targets = 1, render = DT::JS(
+            "function(data, type) {",
+            "  return type === 'display' ?",
+            "    '<div style=\"max-width:16em;white-space:normal\">' + data + '</div>' : data;",
+            "}")),
           # list(className = 'dt-right', targets = c(0)),
-          list(className = 'dt-center', targets = c(0, 9:11)))
+          list(className = 'dt-center', targets = c(0, 9:11)),
+          # column filters only on: Organizace, AMČR ID, Typ organizace,
+          # Zřizovatel, Typ zřizovatele, Platnost MK ČR, Platnost AV ČR
+          list(searchable = FALSE, targets = c(0, 6:8, 11)))
       )
     )
+
+  # Czech placeholder in the column filter row
+  dt$x$filterHTML <- gsub('placeholder="All"', 'placeholder="Vše"',
+                          dt$x$filterHTML, fixed = TRUE)
+  dt
 }
 
 
@@ -53,9 +68,10 @@ dt_data_prep <- function(data, url) {
   data %>% 
     dplyr::mutate(
       # adresa = str_replace(adresa, ", ", "<br>"),
+      # multi-select column filters (DT offers a dropdown for factors)
       dplyr::across(
-        c("label", "zrizovatel"),
-        \(x) stringr::str_replace_all(stringr::str_wrap(x, width = 32), "\\n", "<br>")),
+        c("typ", "zrizovatel", "typ_zrizovatele"),
+        \(x) factor(x, levels = stringr::str_sort(unique(stats::na.omit(x)), locale = "cs"))),
       dplyr::across(
         dplyr::ends_with(c("from", "to")), 
         \(x) as.Date(x, format = "%d. %m. %Y")),

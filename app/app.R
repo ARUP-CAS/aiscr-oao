@@ -675,7 +675,6 @@ details_server <- function(input, output, session) {
 
 # list ui
 list_page <- div(
-  select_oao("oao_multiple", label = "Filtrovat organizace:", multiple = TRUE),
   DT::dataTableOutput("table"),
   tags$p(
     style = "margin-top:6px;",
@@ -687,25 +686,13 @@ list_page <- div(
 
 # list server
 list_server <- function(input, output, session) {
-  # reactives ----
-  oao_meta_multi_flt <- reactive({
-    oao_filter(oao_meta, input$oao_multiple)
-  })
-
   # output ----
-  # DT table
+  # DT table (filtering via DT column filters)
   output$table <- DT::renderDataTable({
-    if (!is.null(input$oao_multiple)) {
-      oao_meta_multi_flt() %>%
-        sf::st_drop_geometry() %>%
-        dt_data_prep(url = client_url()) %>%
-        dt_create()
-    } else {
-      oao_meta %>%
-        sf::st_drop_geometry() %>%
-        dt_data_prep(url = client_url()) %>%
-        dt_create()
-    }
+    oao_meta %>%
+      sf::st_drop_geometry() %>%
+      dt_data_prep(url = client_url()) %>%
+      dt_create()
   })
 
   # nr of oao
