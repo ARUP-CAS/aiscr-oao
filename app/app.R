@@ -912,8 +912,10 @@ server <- function(input, output, session) {
   router_server()
 
   # get current url
+  # read only the url_* fields: depending on all of clientData (output sizes
+  # etc.) re-renders every output using client_url() on any layout change
   client_url <<- reactive({
-    client <- reactiveValuesToList(session$clientData)
+    client <- session$clientData
     paste0(
       client$url_protocol,
       "//",
