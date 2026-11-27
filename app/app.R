@@ -675,13 +675,7 @@ details_server <- function(input, output, session) {
 
 # list ui
 list_page <- div(
-  DT::dataTableOutput("table"),
-  tags$p(
-    style = "margin-top:6px;",
-    "Celkem evidujeme ",
-    textOutput("n_oao", inline = TRUE),
-    " organizací."
-  )
+  DT::dataTableOutput("table")
 )
 
 # list server
@@ -693,12 +687,7 @@ list_server <- function(input, output, session) {
       sf::st_drop_geometry() %>%
       dt_data_prep(url = client_url()) %>%
       dt_create()
-  })
-
-  # nr of oao
-  output$n_oao <- renderText({
-    nrow(oao_meta)
-  })
+  }, server = FALSE) # client-side: the info line counts all filtered rows
 }
 
 
