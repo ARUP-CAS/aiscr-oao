@@ -306,6 +306,10 @@ h3, h4, h5, h6 {
 th, td { padding: 5px; }
 thead, tfoot  { background: #eee; } /* tr:nth-child(even) */
 
+/* list page: DT column filters */
+/* hide filter boxes of non-searchable columns */
+#table thead input.form-control:disabled { visibility: hidden; }
+
 
 
 /*

@@ -116,7 +116,7 @@ oao_meta <- function(dsn, client_url) {
         ),
         ""
       ),
-      telefon = dplyr::if_else(is.na(telefon), "–", telefon),
+      # telefon = dplyr::if_else(is.na(telefon), "–", telefon),
       telefon = stringr::str_replace_all(telefon, ";\\s", ", "),
       ror = dplyr::if_else(
         !is.na(ror),
@@ -136,6 +136,11 @@ oao_meta <- function(dsn, client_url) {
           ror,
           "</a>"
         )
+      ),
+      zrizovatel_text = dplyr::case_when(
+        is.na(zrizovatel) ~ "–",
+        is.na(typ_zrizovatele) ~ zrizovatel,
+        .default = paste0(zrizovatel, " (", typ_zrizovatele, ")")
       ),
       amcr_id = dplyr::if_else(is.na(amcr_id), "–", amcr_id),
       api = dplyr::if_else(
@@ -284,6 +289,7 @@ detail_table <- function(data) {
       telefon,
       adresa,
       ico,
+      zrizovatel_text,
       ror,
       amcr_id,
       api,
@@ -301,6 +307,7 @@ detail_table <- function(data) {
       "Telefon",
       "Adresa",
       "IČO",
+      "Zřizovatel",
       "ROR",
       "AMČR ID",
       "AMČR API",
@@ -338,14 +345,18 @@ kraje_data <- function(data) {
       narizeni = dplyr::if_else(as.logical(narizeni), "&#x2714;", "&#10008;"),
       date_published,
       date,
-      email = paste0(
-        "<a href='mailto:",
-        email,
-        "'>",
-        icon_mail,
-        " ",
-        email,
-        "</a>"
+      email = dplyr::if_else(
+        is.na(email) | email == "",
+        "",
+        paste0(
+          "<a href='mailto:",
+          email,
+          "'>",
+          icon_mail,
+          " ",
+          email,
+          "</a>"
+        )
       )
     )
 }

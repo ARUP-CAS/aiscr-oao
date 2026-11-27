@@ -24,8 +24,8 @@ sleep <- 0.4
 
 # change when data/app is updated
 
-datestamp <<- "2026-08-17"
-appversion <<- "3.2.3"
+datestamp <<- "2026-11-19"
+appversion <<- "3.3.0"
 
 url_da <<- "https://digiarchiv.aiscr.cz/results?entity=projekt&f_organizace="
 url_da_akce <<- "https://digiarchiv.aiscr.cz/results?entity=akce&f_organizace="
@@ -574,6 +574,8 @@ details_server <- function(input, output, session) {
           amcr_id,
           nazev_zkraceny,
           nazev,
+          zrizovatel,
+          typ_zrizovatele,
           adresa,
           app = web_app,
           web = web0,
@@ -673,43 +675,19 @@ details_server <- function(input, output, session) {
 
 # list ui
 list_page <- div(
-  select_oao("oao_multiple", label = "Filtrovat organizace:", multiple = TRUE),
-  DT::dataTableOutput("table"),
-  tags$p(
-    style = "margin-top:6px;",
-    "Celkem evidujeme ",
-    textOutput("n_oao", inline = TRUE),
-    " organizací."
-  )
+  DT::dataTableOutput("table")
 )
 
 # list server
 list_server <- function(input, output, session) {
-  # reactives ----
-  oao_meta_multi_flt <- reactive({
-    oao_filter(oao_meta, input$oao_multiple)
-  })
-
   # output ----
-  # DT table
+  # DT table (filtering via DT column filters)
   output$table <- DT::renderDataTable({
-    if (!is.null(input$oao_multiple)) {
-      oao_meta_multi_flt() %>%
-        sf::st_drop_geometry() %>%
-        dt_data_prep(url = client_url()) %>%
-        dt_create()
-    } else {
-      oao_meta %>%
-        sf::st_drop_geometry() %>%
-        dt_data_prep(url = client_url()) %>%
-        dt_create()
-    }
-  })
-
-  # nr of oao
-  output$n_oao <- renderText({
-    nrow(oao_meta)
-  })
+    oao_meta %>%
+      sf::st_drop_geometry() %>%
+      dt_data_prep(url = client_url()) %>%
+      dt_create()
+  }, server = FALSE) # client-side: the info line counts all filtered rows
 }
 
 
@@ -923,8 +901,10 @@ server <- function(input, output, session) {
   router_server()
 
   # get current url
+  # read only the url_* fields: depending on all of clientData (output sizes
+  # etc.) re-renders every output using client_url() on any layout change
   client_url <<- reactive({
-    client <- reactiveValuesToList(session$clientData)
+    client <- session$clientData
     paste0(
       client$url_protocol,
       "//",
